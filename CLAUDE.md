@@ -35,9 +35,12 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 ## Testing
 - Local: serve the folder with `/join` and `/q` rewritten to `index.html`, open with `?local` → BroadcastChannel transport between tabs.
 - Playwright click-through (2026-10-30): home, setup, phones mode with 2 phones through all 15 questions incl. sort/mc/tf + bonus, results, end; shared-screen mode with team awards; dark mode; editor, share link, import. No console errors.
-- The workspace cannot reach supabase.co, so the real Realtime path is tested on real phones after deploy.
+- The workspace cannot reach supabase.co. Live test 2026-10-30 on quiz.ellenial.app in Ellen's desktop browser (two tabs): host connected ("Ansluten"), phone joined, sort answer arrived ("1 av 1 har svarat"), reveal showed "Rätt!" on the phone, Avsluta ended the phone too. No console errors. Realtime public channels are allowed.
 
 ## Open
 - English version (copy is inline Swedish in `app.js` for now).
 - More ready-made quizzes.
-- Phone test on the real Realtime connection (needs public channels allowed in the Supabase project).
+- Test on real phones at work (Mon 2 Nov).
+
+## Status
+- 2026-10-30: v1 built, tested locally (Playwright) and live, deployed to quiz.ellenial.app (Vercel project `ellenial-quiz`, auto-deploys from `main`).
