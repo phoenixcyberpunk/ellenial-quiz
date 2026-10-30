@@ -41,6 +41,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - English version (copy is inline Swedish in `app.js` for now).
 - More ready-made quizzes.
 - Test on real phones at work (Mon 2 Nov).
+- Pentest of all Ellenial apps, run from its own project (decided 2026-10-30). For this app: public broadcast channel with the publishable key (encrypted, but floodable), headers/CSP. Library cards on ellenial.app stay unlinked during early alpha.
 
 ## Status
 - 2026-10-30: v1 built, tested locally (Playwright) and live, deployed to quiz.ellenial.app (Vercel project `ellenial-quiz`, auto-deploys from `main`).
