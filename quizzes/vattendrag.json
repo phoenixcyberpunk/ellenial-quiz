@@ -1,0 +1,117 @@
+{
+  "id": "vattendrag",
+  "name": "Vattendrag",
+  "intro": "Från källa till flod. Vad skiljer en bäck från en å, och är en å alltid mindre än en älv?",
+  "questions": [
+    {
+      "type": "sort",
+      "prompt": "Sortera från minst till störst",
+      "items": ["Källa", "Rännil", "Bäck", "Å", "Älv"],
+      "notes": ["Där vattnet tränger upp ur marken", "En pytteliten strimma, ofta bara efter regn", "Litet, går att kliva över", "Mellanstort, i söder ibland stort", "Stort, mest i norr"],
+      "visual": "grow",
+      "explain": "Ungefär så, men svenskan har inga officiella storleksgränser."
+    },
+    {
+      "type": "mc",
+      "prompt": "Var tränger vattnet upp ur marken?",
+      "options": ["I en källa", "I en fors", "I ett biflöde", "I ett dike"],
+      "answer": 0,
+      "explain": "En källa är platsen där grundvatten tränger upp ur marken."
+    },
+    {
+      "type": "tf",
+      "prompt": "En å är alltid mindre än en älv.",
+      "answer": false,
+      "explain": "Svenskan har inga officiella gränser. Vissa åar i söder, som Emån och Helge å, är större än små älvar i norr."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vad kallar vi oftast stora utländska vattendrag, som Nilen och Amazonas?",
+      "options": ["Älv", "Flod", "Ström", "Å"],
+      "answer": 1,
+      "explain": "Flod säger vi nästan bara om utländska vattendrag. Stora svenska vattendrag kallas älvar."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vilket ord har samiskt ursprung och betyder bäck eller å i fjällen?",
+      "options": ["Rännil", "Jokk", "Fors", "Kanal"],
+      "answer": 1,
+      "explain": "Jokk, eller jåkk, är ett nordligt ord med samiskt ursprung."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vad är ett biflöde?",
+      "options": ["Ett vattendrag som rinner ut i ett större", "En sjö mitt i en älv", "Vatten som rinner åt fel håll", "Ett grävt dike längs en åker"],
+      "answer": 0,
+      "explain": "Ett biflöde är ett vattendrag som rinner ut i ett större vattendrag."
+    },
+    {
+      "type": "tf",
+      "prompt": "En rännil finns ofta bara efter regn.",
+      "answer": true,
+      "explain": "En rännil är en pytteliten strimma vatten, och den är ofta tillfällig."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vilka två är grävda av människor?",
+      "options": ["Fors och ström", "Kanal och dike", "Bäck och å", "Källa och rännil"],
+      "answer": 1,
+      "explain": "Kanaler och diken är grävda av människor. Resten har naturen gjort."
+    },
+    {
+      "type": "mc",
+      "prompt": "Norrström i Stockholm är ett exempel på en …",
+      "options": ["ström", "fors", "jokk", "bäck"],
+      "answer": 0,
+      "explain": "En ström är kraftigt strömmande vatten, ofta vid ett utlopp. Norrström rinner från Mälaren ut mot Saltsjön."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vad är en fors?",
+      "options": ["En sträcka där vattnet forsar fram", "Ett vattendrag i fjällen", "Där en älv mynnar i havet", "En grävd kanal"],
+      "answer": 0,
+      "explain": "En fors är en sträcka med forsande vatten, ofta över stenar."
+    },
+    {
+      "type": "mc",
+      "prompt": "Älvar finns mest i norr. Vilken stor älv är undantaget i väst?",
+      "options": ["Torneälven", "Luleälven", "Göta älv", "Umeälven"],
+      "answer": 2,
+      "explain": "Göta älv rinner från Vänern ner till Göteborg."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vilket vattendrag kan man oftast kliva över?",
+      "options": ["En bäck", "En å", "En älv", "En ström"],
+      "answer": 0,
+      "explain": "En bäck är litet och går ofta att kliva över."
+    }
+  ],
+  "bonus": {
+    "name": "Bonusrunda: störst på tre sätt",
+    "intro": "Göta älv–Klarälven vinner på allt. Men vem kommer tvåa?",
+    "questions": [
+      {
+        "type": "mc",
+        "prompt": "Sveriges längsta vattendrag är Göta älv–Klarälven, 746 km. Vem kommer tvåa på längd?",
+        "options": ["Dalälven", "Luleälven", "Torneälven", "Ångermanälven"],
+        "answer": 0,
+        "explain": "Dalälven, 557 km. Torneälven är nästan lika lång, 545 km. Siffror från SMHI."
+      },
+      {
+        "type": "mc",
+        "prompt": "Göta älv för mest vatten, i snitt cirka 600 m³ i sekunden. Vem kommer tvåa på vattenföring?",
+        "options": ["Dalälven", "Luleälven", "Torneälven", "Kalixälven"],
+        "answer": 1,
+        "explain": "Luleälven, 546 m³/s. Dalälven, som var tvåa på längd, för bara 353. Siffror från SMHI."
+      },
+      {
+        "type": "mc",
+        "prompt": "Göta älv har också störst avrinningsområde. Vem kommer tvåa där?",
+        "options": ["Dalälven", "Luleälven", "Torneälven", "Umeälven"],
+        "answer": 2,
+        "explain": "Torneälven, nästan 40 000 km². Tvåan blir alltså olika beroende på vad man mäter. Siffror från SMHI."
+      }
+    ]
+  }
+}

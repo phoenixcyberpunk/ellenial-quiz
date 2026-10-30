@@ -1,0 +1,16 @@
+{
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/join", "destination": "/index.html" },
+    { "source": "/q", "destination": "/index.html" }
+  ],
+  "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://knvrvmqdxvcatsrvkrgx.supabase.co wss://knvrvmqdxvcatsrvkrgx.supabase.co; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; object-src 'none'" },
+      { "key": "Referrer-Policy", "value": "no-referrer" },
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" },
+      { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()" }
+    ] }
+  ]
+}

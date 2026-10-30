@@ -1,0 +1,15 @@
+{
+  "name": "ellenial quiz",
+  "short_name": "quiz",
+  "description": "Ett gratis quiz att köra tillsammans. Inget konto, ingen reklam, inget sparas.",
+  "lang": "sv",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FEF2E2",
+  "theme_color": "#342E86",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

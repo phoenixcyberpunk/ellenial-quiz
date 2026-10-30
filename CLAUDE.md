@@ -1,0 +1,43 @@
+# ellenial quiz — Project Guide
+
+Read this first in every session. Swedish-language quiz app under **Ellenial**. Project notes and decisions also live in the claude.ai Project "Ellenial - Quiz Buddy" (`claude/projektbrief.md`).
+
+## Infrastructure
+- **Code:** GitHub `phoenixcyberpunk/ellenial-quiz` (public, AGPL-3.0).
+- **Hosting:** Vercel team "The Ellenial Project" (`the-ellenial-project`), project `ellenial-quiz`, domain `quiz.ellenial.app`.
+- **Live connection:** Supabase project `gillefeeling` (ref `knvrvmqdxvcatsrvkrgx`), **Realtime broadcast only**: no tables, no functions, no migrations. Channel `quiz:<roomId>`, event `m`, payload `{ b: "1." + base64url(iv‖ciphertext) }`. Requires Realtime public channels to be allowed in that project.
+- **Stack:** plain HTML/CSS/JS, no build. `vendor/supabase.min.js` is supabase-js 2.118.0 bundled with esbuild (`export { createClient }`, IIFE, global `supabase`). `vendor/qrcode.js` is qrcode-generator 2.0.4.
+
+## Decisions (2026-10-30)
+- Own app at quiz.ellenial.app, not a Party games game: people who just want to quiz get an easier way in.
+- Ready-made quizzes + "create your own"; own quizzes in localStorage (`eq:quizzes`), shared as `/q#z.<deflate-raw base64url>`.
+- Two modes: **shared screen** (teams, host taps teams that were right) and **phones** (each phone answers, scores automatic).
+- Link principle like Split: `/join#<roomId 22>.<secret 43>`; secret only after `#`; HKDF → AES-GCM key, AAD `eq1|<roomId>`.
+- Nothing stored server-side. Host holds state in memory; phones keep only `{pid, name}` in sessionStorage for reloads.
+- Time per question optional: none / 30 / 60 / 90 s, one shared calm bar.
+- Results: no last place. Team cards in entered order, "Flest rätt idag" on the top score; phones mode shows top 3 + total, each phone sees only its own score.
+- Icon: Ellen's flower per the Ellenial icon template, tile colour sage `#D5E3D6` (swapped with maps, which became pistachio `#E2EBC6`).
+
+## Brand Principles applied
+1. Worst day: no last place, gentle "Inte den här gången", no streaks, timer is calm and optional.
+2. Art: Ellen's own flower; no AI art.
+3. Pay myself: free, no ads, no tracking.
+4. Data: nothing stored; phone messages encrypted end to end; explained in-app ("Så fungerar det").
+5. Runs without me: static site, broadcast only, nothing to clean up.
+6. Free and open: AGPL-3.0, public repo, costs stated.
+
+## Protocol
+- Phone → host: `{t:'hello', pid, name}` (repeated every 3 s until the host lists the pid), `{t:'answer', pid, i, a}`.
+- Host → all: `{t:'state', phase, i, n, ids, got, locked, q?, rem?, reveal?, scores?, top?}` on every change + every 4 s; `{t:'end'}`.
+- `q` never contains the answer; `reveal` only in phase `reveal`. Sort answers are letter positions; host shuffles items per question (`shown`).
+- Host validates every phone message (pid format, current question, not locked, value shape). Limits: 80 players, 24-char names.
+
+## Testing
+- Local: serve the folder with `/join` and `/q` rewritten to `index.html`, open with `?local` → BroadcastChannel transport between tabs.
+- Playwright click-through (2026-10-30): home, setup, phones mode with 2 phones through all 15 questions incl. sort/mc/tf + bonus, results, end; shared-screen mode with team awards; dark mode; editor, share link, import. No console errors.
+- The workspace cannot reach supabase.co, so the real Realtime path is tested on real phones after deploy.
+
+## Open
+- English version (copy is inline Swedish in `app.js` for now).
+- More ready-made quizzes.
+- Phone test on the real Realtime connection (needs public channels allowed in the Supabase project).
