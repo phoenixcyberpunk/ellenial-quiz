@@ -44,3 +44,4 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 
 ## Status
 - 2026-10-30: v1 built, tested locally (Playwright) and live, deployed to quiz.ellenial.app (Vercel project `ellenial-quiz`, auto-deploys from `main`).
+- 2026-10-30 evening: Ellen's own test round worked. Listed in the ellenial.app library as "Early alpha" (icon `site/icons/quiz.png` in the ellenial repo).
