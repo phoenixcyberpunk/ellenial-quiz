@@ -1,10 +1,10 @@
-/* Ellenial look: tokens from ellenial.app (Ellen's flower colours), Fraunces + DM Sans served from this site. */
+/* Ellenial look: tokens from ellenial.app (Ellen's flower colours), Fraunces + Instrument Sans served from this site. */
 @font-face { font-family: "Fraunces"; src: url("/fonts/fraunces-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Fraunces"; src: url("/fonts/fraunces-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
 @font-face { font-family: "Fraunces"; src: url("/fonts/fraunces-latin-600-normal.woff2") format("woff2"); font-weight: 600 700; font-display: swap; }
-@font-face { font-family: "DM Sans"; src: url("/fonts/dm-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "DM Sans"; src: url("/fonts/dm-sans-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
-@font-face { font-family: "DM Sans"; src: url("/fonts/dm-sans-latin-700-normal.woff2") format("woff2"); font-weight: 600 800; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("/fonts/instrument-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("/fonts/instrument-sans-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("/fonts/instrument-sans-latin-700-normal.woff2") format("woff2"); font-weight: 600 800; font-display: swap; }
 
 :root {
   --ground: #FEF2E2; --surface: #FFFBF5; --ink: #1F1A2E; --muted: #575166;
@@ -14,7 +14,7 @@
   --ok: #D5E3D6; --ok-ink: #24452B; --miss: #F0D5DC;
   --t1: #D5E3D6; --t2: #E6DDF3; --t3: #F3E3B5; --t4: #D3E2EC; --t5: #F2D6C4; --t6: #F0D5DC;
   --display: "Fraunces", Georgia, "Times New Roman", serif;
-  --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
