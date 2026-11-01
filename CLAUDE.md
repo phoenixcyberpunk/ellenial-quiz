@@ -18,6 +18,15 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Results: no last place. Team cards in entered order, "Flest rätt idag" on the top score; phones mode shows top 3 + total, each phone sees only its own score.
 - Icon: Ellen's flower per the Ellenial icon template, tile colour sage `#D5E3D6` (swapped with maps, which became pistachio `#E2EBC6`).
 
+## Brand (final, decided 2026-11-01 — don't reopen)
+- Source of truth: the "Ellenial – Brand identity" doc (https://claude.ai/artifact/9Fng54MMZMyyKjkqKaVR7r). Applied everywhere in this app, no exceptions.
+- Tokens live at the top of `styles.css`: Peach `#FEF2E2`, Card `#FFFBF5`, Lavender `#F1EAF8`, Periwinkle `#B7B1E6` (fill only, Night text on it), Indigo `#342E86`, Night `#1F1A2E`, Muted `#575166`, Line `#EDE1D1`. Dark: `#17141F` / `#221E2C` / `#2D2640` / Periwinkle `#463C6E` / accent `#B39AE8` (text on it `#1A1430`) / text `#F3EEF8` / muted `#C2BACF` / line `#332D40`.
+- Fonts: Fraunces headings, DM Sans text (both self-hosted in `fonts/`, OFL). Instrument Sans is gone.
+- Theme: `ellenial-theme.js` copied unchanged from ellenial maps, loaded in `<head>` before the CSS (key `eq:theme-pref`). Auto / Ljust / Mörkt switch in every top bar via `themeButton()`. Old v1 `eq:theme` is migrated once. Test with `?theme=light|dark`.
+- Accessibility: text ≥ 4.5:1, controls ≥ 3:1 (`--edge` = Muted outline on everything tappable; Line is decorative only), never colour alone (✓ on right answers and awarded teams, words on results, underline + bold on selected segments). Wrong options on the shared screen step back with a transparent fill instead of fading the text.
+- Team colours: Periwinkle / Lavender / Card in turn (teams are always named, colour is only a helper). Semantic green stays only for "right" and "connected".
+- Quiz's sage `#D5E3D6` remains only in the icon tile (ellenial.app library), not in the UI.
+
 ## Brand Principles applied
 1. Worst day: no last place, gentle "Inte den här gången", no streaks, timer is calm and optional.
 2. Art: Ellen's own flower; no AI art.
@@ -34,6 +43,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 
 ## Testing
 - Local: serve the folder with `/join` and `/q` rewritten to `index.html`, open with `?local` → BroadcastChannel transport between tabs.
+- 2026-11-01: Playwright + axe-core (Chrome at /usr/bin/google-chrome) through home, setup, shared-screen reveal ×3, phones mode lobby/join/answer/reveal, theme switch + migration, light and dark.
 - Playwright click-through (2026-10-30): home, setup, phones mode with 2 phones through all 15 questions incl. sort/mc/tf + bonus, results, end; shared-screen mode with team awards; dark mode; editor, share link, import. No console errors.
 - The workspace cannot reach supabase.co. Live test 2026-10-30 on quiz.ellenial.app in Ellen's desktop browser (two tabs): host connected ("Ansluten"), phone joined, sort answer arrived ("1 av 1 har svarat"), reveal showed "Rätt!" on the phone, Avsluta ended the phone too. No console errors. Realtime public channels are allowed.
 
@@ -44,5 +54,6 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Pentest of all Ellenial apps, run from its own project (decided 2026-10-30). For this app: public broadcast channel with the publishable key (encrypted, but floodable), headers/CSP. Library cards on ellenial.app stay unlinked during early alpha.
 
 ## Status
+- 2026-11-01: Brand update (palette incl. Periwinkle, DM Sans, Auto/Ljust/Mörkt, accessibility rules) on branch `staging` → Vercel preview. Playwright + axe in both themes, phone and 1366×768: no contrast violations, all controls ≥ 3:1, no console errors. Not merged to `main` yet.
 - 2026-10-30: v1 built, tested locally (Playwright) and live, deployed to quiz.ellenial.app (Vercel project `ellenial-quiz`, auto-deploys from `main`).
 - 2026-10-30 evening: Ellen's own test round worked. Listed in the ellenial.app library as "Early alpha" (icon `site/icons/quiz.png` in the ellenial repo).

@@ -13,7 +13,9 @@
     origin: 'https://quiz.ellenial.app'
   };
   var LIMITS = { players: 80, name: 24, quizName: 60, questions: 50, prompt: 200, option: 80, options: 6, explain: 300 };
-  var TEAM_COLORS = ['var(--t1)', 'var(--t2)', 'var(--t3)', 'var(--t4)', 'var(--t5)', 'var(--t6)'];
+  // Team fills from the one Ellenial palette (Periwinkle, Lavender, Card). Teams are always named,
+  // so the colour is only a helper, never the meaning.
+  var TEAM_COLORS = ['var(--peri)', 'var(--soft)', 'var(--surface)'];
   var LETTERS = 'ABCDEF';
   var TEAM_IDEAS = ['Forsen', 'Biflödet', 'Kanalen', 'Källan', 'Jokken', 'Strömmen'];
 
@@ -110,19 +112,16 @@
 
   /* ---------------- theme ---------------- */
 
-  function applyTheme() {
-    var t = store('eq:theme');
-    if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
-    else document.documentElement.removeAttribute('data-theme');
-  }
-  function toggleTheme() {
-    var dark = document.documentElement.getAttribute('data-theme') === 'dark' ||
-      (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    store('eq:theme', dark ? 'light' : 'dark');
-    applyTheme();
+  // Auto / Ljust / Mörkt with the shared Ellenial switch (ellenial-theme.js, same as ellenial maps).
+  // The choice is saved on this device only. Auto follows the phone.
+  function migrateTheme() {
+    var old = store('eq:theme');   // the v1 moon button
+    if (old === 'dark' || old === 'light') { if (window.EllenialTheme && EllenialTheme.get() === 'auto') EllenialTheme.set(old); }
+    if (old !== null) store('eq:theme', null);
   }
   function themeButton() {
-    return h('button', { class: 'round', 'aria-label': 'Byt mellan ljust och mörkt läge', onclick: toggleTheme }, icon('moon'));
+    if (!window.EllenialTheme) return null;
+    return EllenialTheme.control({ label: 'Tema', labels: { auto: 'Auto', light: 'Ljust', dark: 'Mörkt' } });
   }
 
   /* ---------------- base64url + crypto (the only crypto in this app) ---------------- */
@@ -428,7 +427,7 @@
       h('h2', { class: 'label', text: 'Lag' }),
       h('div', { class: 'chips' },
         s.teams.map(function (t, i) {
-          return h('span', { class: 'team-chip', style: 'background:' + TEAM_COLORS[i % 6] },
+          return h('span', { class: 'team-chip', style: 'background:' + TEAM_COLORS[i % 3] },
             h('input', { value: t, 'aria-label': 'Lag ' + (i + 1), maxlength: LIMITS.name, size: Math.max(4, t.length),
               oninput: function (e) { s.teams[i] = e.target.value; e.target.size = Math.max(4, e.target.value.length); } }),
             s.teams.length > 1 ? h('button', { 'aria-label': 'Ta bort ' + t, onclick: function () { s.teams.splice(i, 1); rerender(); } }, icon('x', 16)) : null);
@@ -645,7 +644,7 @@
         g.quiz.intro ? h('p', { class: 'sub', text: g.quiz.intro }) : null,
         h('p', { class: 'sub', text: plural(g.qs.length, 'fråga', 'frågor') + (g.time ? ' · ' + g.time + ' sekunder per fråga' : '') })),
       h('div', { class: 'teams-grid' }, g.teams.map(function (t, i) {
-        return h('div', { class: 'team-card', style: 'background:' + TEAM_COLORS[i % 6] }, h('span', { class: 'tname', text: t.name }));
+        return h('div', { class: 'team-card', style: 'background:' + TEAM_COLORS[i % 3] }, h('span', { class: 'tname', text: t.name }));
       })),
       h('div', { class: 'stage-bottom' }, endButton(g), h('span', { class: 'spacer' }),
         h('button', { class: 'btn', id: 'primary', onclick: function () { hostNext(g); } }, 'Första frågan')));
@@ -687,14 +686,14 @@
     if (q.type === 'sort') {
       body = h('div', { class: 'cards-grid' }, q.shown.map(function (k, pos) {
         return h('div', { class: 'word-card' },
-          h('span', { class: 'letter', style: 'background:' + TEAM_COLORS[pos % 6], text: LETTERS[pos] }),
+          h('span', { class: 'letter', text: LETTERS[pos] }),
           h('span', { class: 'word', text: q.items[k] }));
       }));
     } else {
       var opts = q.type === 'tf' ? ['Sant', 'Falskt'] : q.options;
       body = h('div', { class: 'opts-grid' }, opts.map(function (o, k) {
         return h('div', { class: 'opt-card' },
-          h('span', { class: 'letter', style: 'background:' + TEAM_COLORS[k % 6], text: LETTERS[k] }),
+          h('span', { class: 'letter', text: LETTERS[k] }),
           h('span', { class: 'text', text: o }));
       }));
     }
@@ -749,7 +748,7 @@
         var isAns = vals[k] === q.answer, c = counts ? (counts[String(vals[k])] || 0) : null;
         return h('div', { class: 'opt-card' + (isAns ? ' right' : ' dim') },
           counts && answeredN ? h('span', { class: 'fill', style: 'width:' + Math.round(100 * c / answeredN) + '%' }) : null,
-          h('span', { class: 'letter', style: 'background:' + (isAns ? 'var(--accent);color:var(--on-accent)' : TEAM_COLORS[k % 6]) }, isAns ? icon('check', 24) : LETTERS[k]),
+          h('span', { class: 'letter' }, isAns ? icon('check', 24) : LETTERS[k]), isAns ? h('span', { class: 'sr-only', text: 'Rätt svar: ' }) : null,
           h('span', { class: 'text', text: o }),
           counts ? h('span', { class: 'count', text: String(c) }) : null);
       }));
@@ -781,7 +780,7 @@
     if (g.mode === 'screen') {
       var best = Math.max.apply(null, g.teams.map(function (t) { return t.score; }));
       body = h('div', { class: 'teams-grid' }, g.teams.map(function (t, i) {
-        return h('div', { class: 'team-card', style: 'background:' + TEAM_COLORS[i % 6] },
+        return h('div', { class: 'team-card', style: 'background:' + TEAM_COLORS[i % 3] },
           h('span', { class: 'badge', text: best > 0 && t.score === best ? 'Flest rätt idag' : '' }),
           h('span', { class: 'tname', text: t.name }),
           h('span', { class: 'tscore', text: t.score + ' rätt' }));
@@ -790,7 +789,7 @@
       var top = topPlayers(g), total = g.order.reduce(function (s, id) { return s + g.players[id].score; }, 0);
       body = h('div', { style: 'display:flex;flex-direction:column;gap:clamp(14px,2vw,24px)' },
         top.length ? h('div', { class: 'teams-grid' }, top.map(function (p, i) {
-          return h('div', { class: 'team-card', style: 'background:' + TEAM_COLORS[i % 6] },
+          return h('div', { class: 'team-card', style: 'background:' + TEAM_COLORS[i % 3] },
             h('span', { class: 'badge', text: p.score === top[0].score ? 'Flest rätt idag' : 'Topp 3' }),
             h('span', { class: 'tname', text: p.name }),
             h('span', { class: 'tscore', text: p.score + ' rätt' }));
@@ -970,7 +969,7 @@
     else answerText = (r.answer || []).map(function (k) { return q.items[k]; }).join(' → ');
     return [
       h('div', { class: 'result-box ' + (res === 1 ? 'ok' : 'miss') },
-        h('h2', { text: res === 1 ? 'Rätt!' : res === 0 ? 'Inte den här gången' : 'Inget svar' }),
+        res === 1 ? h('h2', null, icon('check', 26), 'Rätt!') : h('h2', { text: res === 0 ? 'Inte den här gången' : 'Inget svar' }),
         h('p', { style: 'margin:0' }, h('strong', { text: 'Svar: ' }), answerText)),
       r.explain ? h('p', { style: 'margin:0', text: r.explain }) : null,
       h('p', { class: 'small muted', style: 'margin:0', text: 'Nästa fråga kommer på skärmen.' })
@@ -1097,7 +1096,7 @@
   /* ---------------- start ---------------- */
 
   function boot() {
-    applyTheme();
+    migrateTheme();
     var path = location.pathname;
     if (path.indexOf('/join') === 0) {
       var ref = readRoomRef(location.hash);
