@@ -63,6 +63,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Pentest of all Ellenial apps, run from its own project (decided 2026-10-30). For this app: public broadcast channel with the publishable key (encrypted, but floodable), headers/CSP. Library cards on ellenial.app stay unlinked during early alpha.
 
 ## Status
+- 2026-11-03 13:52: Print / save as PDF + sort display order shipped from `staging` to `main` / quiz.ellenial.app on Ellen's yes ("Good, push"). Previous production (25c7a5a) stays in Vercel for rollback.
 - 2026-11-03: Sort questions: creator picks mixed or fixed display order (staging). Tested editor, paper and two shared-screen games: fixed order matches everywhere; axe clean in both themes.
 - 2026-11-03: Print / save as PDF built on branch `staging` (not yet on `main`). Playwright + axe in light and dark, phone width: no violations, no console errors; PDFs checked through print media in both themes.
 - 2026-11-01: Brand update (palette incl. Periwinkle, DM Sans, Auto/Ljust/Mörkt, accessibility rules) reviewed on branch `staging`, then shipped to `main` / quiz.ellenial.app the same evening on Ellen's yes. Playwright + axe in both themes, phone and 1366×768: no contrast violations, all controls ≥ 3:1, no console errors.
