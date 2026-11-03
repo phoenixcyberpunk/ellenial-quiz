@@ -254,8 +254,15 @@
       if (out.items.length < 3) return null;
       if (Array.isArray(q.notes) && q.notes.length === out.items.length) out.notes = q.notes.map(function (n) { return clean(n, 120); });
       if (q.visual === 'grow') out.visual = 'grow';
+      // Creator's choice: a fixed display order (fixed[k] = index of the item shown as letter k),
+      // same on screen and on paper. Without it the screen mixes every game.
+      if (Array.isArray(q.fixed) && q.fixed.length === q.items.length && isPerm(q.fixed, q.items.length)) out.fixed = q.fixed.slice();
     } else return null;
     return out;
+  }
+  function isPerm(arr, n) {
+    var seen = {};
+    return arr.every(function (v) { return Math.floor(v) === v && v >= 0 && v < n && !seen[v] && (seen[v] = true); });
   }
   function cleanQuiz(q) {
     if (!q || typeof q !== 'object' || !Array.isArray(q.questions)) return null;
@@ -493,7 +500,8 @@
     var out = Object.assign({}, q, { bonus: bonus });
     if (q.type === 'sort') {
       var idx = q.items.map(function (_, i) { return i; }), order;
-      do { order = shuffle(idx); } while (order.every(function (v, i) { return v === i; }));
+      if (q.fixed) order = q.fixed.slice(); // the creator chose the order: same every game and on paper
+      else do { order = shuffle(idx); } while (order.every(function (v, i) { return v === i; }));
       out.shown = order; // shown[k] = index of the item printed as letter k
     }
     return out;
@@ -986,6 +994,39 @@
   function newDraft() {
     return { id: randomB64u(9), quiz: { name: '', questions: [{ type: 'mc', prompt: '', options: ['', '', ''], answer: 0 }] } };
   }
+  // How a sort question is shown: mixed fresh every game, or in an order the creator picks.
+  // A fixed order is the same on the shared screen, on phones and on paper.
+  function sortShowEditor(q, qi, rerender, save) {
+    var fixed = Array.isArray(q.fixed) && q.fixed.length === q.items.length;
+    var parts = [
+      h('span', { class: 'small', style: 'font-weight:500', text: 'Så visas den när ni spelar' }),
+      h('div', { class: 'seg', role: 'group', 'aria-label': 'Så visas den när ni spelar' },
+        h('button', { 'aria-pressed': String(!fixed), onclick: function () { delete q.fixed; rerender(); } }, 'Blanda varje gång'),
+        h('button', { 'aria-pressed': String(fixed), onclick: function () {
+          if (!fixed) q.fixed = paperOrder({ prompt: q.prompt || '', items: q.items }, qi + 1);
+          rerender();
+        } }, 'Fast ordning'))
+    ];
+    if (!fixed) {
+      parts.push(h('p', { class: 'small muted', style: 'margin:0', text: 'Ny blandning varje gång ni spelar. På papper blir den alltid likadan.' }));
+    } else {
+      parts.push(h('p', { class: 'small muted', style: 'margin:0', text: 'Samma ordning på skärmen, i mobilerna och på papper. Bra om du skriver ut svarsblad och kör på skärmen samtidigt.' }));
+      parts.push(h('ol', { class: 'show-list' }, q.fixed.map(function (k, pos) {
+        function move(d) { var t = q.fixed[pos]; q.fixed[pos] = q.fixed[pos + d]; q.fixed[pos + d] = t; rerender(); }
+        var label = q.items[k] || ('Plats ' + (k + 1));
+        return h('li', { class: 'opt-row' },
+          h('span', { class: 'order', text: LETTERS[pos] }),
+          h('span', { class: 'show-item', text: label }),
+          h('div', { class: 'row-actions' },
+            pos > 0 ? h('button', { class: 'round', 'aria-label': 'Flytta ' + label + ' upp', onclick: function () { move(-1); } }, icon('up')) : null,
+            pos < q.fixed.length - 1 ? h('button', { class: 'round', 'aria-label': 'Flytta ' + label + ' ner', onclick: function () { move(1); } }, icon('down')) : null));
+      })));
+      if (q.fixed.every(function (v, i) { return v === i; })) {
+        parts.push(h('p', { class: 'notice', style: 'margin:0', text: 'Obs: nu visas den i rätt ordning, så svaret syns direkt.' }));
+      }
+    }
+    return h('div', { class: 'group show-box' }, parts);
+  }
   function viewEdit() {
     var d = state.draft, quiz = d.quiz;
     function save() { upsertMyQuiz({ id: d.id, quiz: quiz }); }
@@ -1003,7 +1044,7 @@
         if (q.type === t) return;
         var texts = (q.options || q.items || []).slice();
         q.type = t;
-        delete q.options; delete q.items; delete q.notes; delete q.visual;
+        delete q.options; delete q.items; delete q.notes; delete q.visual; delete q.fixed;
         if (t === 'mc') { q.options = texts.length >= 2 ? texts : ['', '', '']; q.answer = 0; }
         if (t === 'sort') { q.items = texts.length >= 3 ? texts : texts.concat(['', '', '']).slice(0, Math.max(3, texts.length)); delete q.answer; }
         if (t === 'tf') { q.answer = true; }
@@ -1022,14 +1063,19 @@
           }),
           q.options.length < LIMITS.options ? h('button', { class: 'btn dashed', style: 'min-height:44px', onclick: function () { q.options.push(''); rerender(); } }, '+ Svar') : null));
       } else if (q.type === 'sort') {
-        body.push(h('div', { class: 'group' }, h('span', { class: 'small', style: 'font-weight:500', text: 'Skriv i rätt ordning. De blandas när ni spelar.' }),
+        body.push(h('div', { class: 'group' }, h('span', { class: 'small', style: 'font-weight:500', text: q.fixed ? 'Skriv i rätt ordning. Det är svaret.' : 'Skriv i rätt ordning. De blandas när ni spelar.' }),
           q.items.map(function (o, oi) {
             return h('div', { class: 'opt-row' },
               h('span', { class: 'order', text: String(oi + 1) }),
               h('input', { class: 'input', value: o, maxlength: LIMITS.option, 'aria-label': 'Plats ' + (oi + 1), placeholder: oi === 0 ? 'Först' : oi === q.items.length - 1 ? 'Sist' : 'Plats ' + (oi + 1), oninput: function (e) { q.items[oi] = e.target.value; save(); } }),
-              q.items.length > 3 ? h('button', { class: 'round', 'aria-label': 'Ta bort plats ' + (oi + 1), onclick: function () { q.items.splice(oi, 1); rerender(); } }, icon('x', 16)) : null);
+              q.items.length > 3 ? h('button', { class: 'round', 'aria-label': 'Ta bort plats ' + (oi + 1), onclick: function () {
+                q.items.splice(oi, 1);
+                if (q.fixed) q.fixed = q.fixed.filter(function (k) { return k !== oi; }).map(function (k) { return k > oi ? k - 1 : k; });
+                rerender();
+              } }, icon('x', 16)) : null);
           }),
-          q.items.length < LIMITS.options ? h('button', { class: 'btn dashed', style: 'min-height:44px', onclick: function () { q.items.push(''); rerender(); } }, '+ Plats') : null));
+          q.items.length < LIMITS.options ? h('button', { class: 'btn dashed', style: 'min-height:44px', onclick: function () { q.items.push(''); if (q.fixed) q.fixed.push(q.items.length - 1); rerender(); } }, '+ Plats') : null,
+          sortShowEditor(q, qi, rerender, save)));
       } else {
         body.push(h('div', { class: 'group' }, h('span', { class: 'small', style: 'font-weight:500', text: 'Rätt svar' }),
           h('div', { class: 'seg' },
@@ -1096,6 +1142,7 @@
   }
   // Same order every time for the same question, never the right order (the paper must not give it away).
   function paperOrder(q, qi) {
+    if (q.fixed) return q.fixed.slice();
     var n = q.items.length, seed = 7 + qi * 31;
     for (var c = 0; c < q.prompt.length; c++) seed = (seed * 33 + q.prompt.charCodeAt(c)) % 2147483647;
     var order = q.items.map(function (_, i) { return i; });
@@ -1124,7 +1171,7 @@
           h('span', { text: v ? 'Sant' : 'Falskt' }), mark(ok));
       }));
     } else {
-      var order = paperOrder(q, num);
+      var order = paperOrder(q, q.fixed ? 0 : num);
       var seq = q.items.map(function (_, k) { return LETTERS[order.indexOf(k)]; });
       body = h('div', null,
         h('ol', { class: 'p-opts', type: 'A' }, order.map(function (idx, k) {

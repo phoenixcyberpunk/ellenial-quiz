@@ -39,7 +39,8 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Ellen's reason: "I made a great quiz yesterday, I wish I could've downloaded it." Printing was chosen over a data file + import for now.
 - View `print` (`openPrint(quiz, onBack)`), reached from: built-in quiz card ("Skriv ut"), print icon on each "Mina quiz" row, the editor ("Skriv ut eller spara som PDF") and the share-link import page.
 - Two versions, last choice remembered in `eq:print`: **Med svar** (quizmaster: ✓ RÄTT SVAR, sort order as letters + words, "Visste du?") and **Svarsblad till lagen** (no answers, tick boxes, "Lag: ___", "Ordning: ___", "Antal rätt: ___ av N").
-- Sort items on paper use a deterministic shuffle (`paperOrder`, seeded by number + prompt), never the right order, same every print.
+- Sort items on paper use a deterministic shuffle (`paperOrder`, seeded by number + prompt), never the right order, same every print, identical on both versions.
+- **Creator decides** (Ellen, 2026-11-03): each sort question has "Så visas den när ni spelar" in the editor: **Blanda varje gång** (default; screen mixes fresh each game, paper uses `paperOrder`) or **Fast ordning** (`q.fixed`, permutation: `fixed[k]` = item shown as letter k; same on screen, phones and paper; starts from `paperOrder`, reorder with up/down; notice if it equals the answer order). Kept through share links; validated with `isPerm` in `cleanQuestion`. Question order and MC options are never shuffled anywhere.
 - Uses the browser's print dialog (`window.print()`), so "Save as PDF" works everywhere and nothing leaves the device. The sheet is white paper in both themes; `@media print` hides the controls and forces `color-scheme: light`.
 - Still open: keeping quizzes so they don't disappear (backup file + "open file", or something else).
 
@@ -62,6 +63,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Pentest of all Ellenial apps, run from its own project (decided 2026-10-30). For this app: public broadcast channel with the publishable key (encrypted, but floodable), headers/CSP. Library cards on ellenial.app stay unlinked during early alpha.
 
 ## Status
+- 2026-11-03: Sort questions: creator picks mixed or fixed display order (staging). Tested editor, paper and two shared-screen games: fixed order matches everywhere; axe clean in both themes.
 - 2026-11-03: Print / save as PDF built on branch `staging` (not yet on `main`). Playwright + axe in light and dark, phone width: no violations, no console errors; PDFs checked through print media in both themes.
 - 2026-11-01: Brand update (palette incl. Periwinkle, DM Sans, Auto/Ljust/Mörkt, accessibility rules) reviewed on branch `staging`, then shipped to `main` / quiz.ellenial.app the same evening on Ellen's yes. Playwright + axe in both themes, phone and 1366×768: no contrast violations, all controls ≥ 3:1, no console errors.
 - 2026-10-30: v1 built, tested locally (Playwright) and live, deployed to quiz.ellenial.app (Vercel project `ellenial-quiz`, auto-deploys from `main`).
