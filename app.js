@@ -413,6 +413,11 @@
       h('div', { class: 'group' },
         h('h2', { class: 'label', text: 'Kostnader' }),
         h('p', { style: 'margin:0', text: 'En statisk sida på Vercel och Supabase gratisnivå, samma som mina andra appar. Alltså nära noll kronor.' })),
+      h('div', { class: 'group' },
+        h('h2', { class: 'label', text: 'Källor' }),
+        h('p', { style: 'margin:0' }, 'Siffrorna i bonusrundan om vattendrag kommer från ',
+          h('a', { href: 'https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/sveriges-storsta-vattendrag', rel: 'noopener' }, 'SMHI'),
+          ' (CC BY 4.0).')),
       h('p', { class: 'foot', text: 'Gjord av Ellen, en person, med Claude som hjälp med koden. Öppen källkod (AGPL-3.0).' }));
   }
 

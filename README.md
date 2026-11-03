@@ -51,7 +51,7 @@ A static site on Vercel's free tier plus Supabase's free tier (shared with my ot
 
 - Product, design and the flower: Ellen Nilsson. Code: written with Claude.
 - Facts for the waterways bonus round: [SMHI, Sveriges största vattendrag](https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/sveriges-storsta-vattendrag).
-- Fonts: Fraunces (The Fraunces Project Authors) and Instrument Sans (The Instrument Sans Project Authors), SIL OFL 1.1, via Fontsource.
+- Fonts: Fraunces (The Fraunces Project Authors) and DM Sans (The DM Sans Project Authors), SIL OFL 1.1, self-hosted in `fonts/`.
 - [supabase-js](https://github.com/supabase/supabase-js) (MIT), [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) by Kazuhiko Arase (MIT).
 
 ## Licence
