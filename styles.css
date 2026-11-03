@@ -279,3 +279,57 @@ textarea.input { resize: vertical; min-height: 70px; }
 .theme-switch__btn[aria-pressed="true"] { background: var(--peri); color: var(--on-peri); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .stage .theme-switch__btn { font-size: clamp(14px, 1.1vw, 17px); min-height: clamp(36px, 3vw, 44px); }
 @media (max-width: 420px) { .theme-switch { padding: 2px; } .theme-switch__btn { padding: 0 6px; font-size: 13px; min-width: 40px; } }
+
+/* ---------- Print / save as PDF ----------
+   The sheet is paper in both themes (what you see is what prints), Night ink on white,
+   Fraunces headings + DM Sans text. Right answers carry ✓ + bold, never colour alone. */
+.print-page { max-width: 760px; }
+.sheet {
+  background: #FFFFFF; color: #1F1A2E; border-radius: 6px; padding: 40px 44px;
+  box-shadow: 0 1px 3px rgba(31,26,46,.12), 0 8px 24px rgba(31,26,46,.10);
+  font-family: var(--body); font-size: 15px; line-height: 1.45; color-scheme: light;
+}
+:root[data-theme="dark"] .sheet { box-shadow: 0 0 0 1px #332D40; }
+.sheet h1, .sheet h2 { font-family: var(--display); color: #1F1A2E; }
+.p-head { border-bottom: 2px solid #1F1A2E; padding-bottom: 14px; margin-bottom: 18px; }
+.p-kicker { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #575166; }
+.p-head h1 { margin: 0; font-weight: 600; font-size: 30px; line-height: 1.15; }
+.p-intro { margin: 6px 0 0; color: #575166; }
+.p-meta { margin: 6px 0 0; font-size: 13px; color: #575166; }
+.p-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.p-q { break-inside: avoid; page-break-inside: avoid; }
+.p-prompt { margin: 0 0 6px; font-weight: 600; font-size: 16px; }
+.p-num { font-family: var(--display); font-weight: 600; }
+.p-type { font-weight: 400; font-size: 13px; color: #575166; }
+.p-opts { list-style: none; margin: 0; padding: 0 0 0 22px; display: flex; flex-direction: column; gap: 3px; }
+.p-opts.p-tf { flex-direction: row; gap: 24px; }
+.p-opts li { display: flex; align-items: baseline; gap: 8px; }
+.p-letter { font-weight: 700; min-width: 1.2em; color: #575166; }
+.p-opts li.is-right { font-weight: 700; }
+.p-opts li.is-right .p-letter { color: #1F1A2E; }
+.p-right { font-weight: 700; color: #24452B; white-space: nowrap; }
+.sr-print { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.p-box { width: 13px; height: 13px; border: 1.5px solid #575166; border-radius: 3px; flex: none; align-self: center; }
+.p-answer, .p-write, .p-explain { margin: 6px 0 0 22px; }
+.p-sub { color: #575166; font-size: 13px; }
+.p-explain { font-size: 14px; color: #575166; border-left: 3px solid #B7B1E6; padding-left: 10px; }
+.p-explain strong { color: #1F1A2E; }
+.p-blank { display: inline-block; width: 2.6em; border-bottom: 1.5px solid #575166; margin: 0 6px 0 2px; height: 1.1em; vertical-align: baseline; }
+.p-blank.wide { width: 16em; }
+.p-team { margin: 14px 0 0; font-weight: 600; }
+.p-bonus { margin-top: 24px; padding-top: 14px; border-top: 1px solid #EDE1D1; break-before: auto; }
+.p-bonus h2 { margin: 0 0 4px; font-weight: 600; font-size: 22px; }
+.p-bonus .p-intro { margin: 0 0 14px; }
+.p-score { margin: 24px 0 0; font-weight: 600; }
+.p-foot { margin-top: 28px; padding-top: 10px; border-top: 1px solid #EDE1D1; font-size: 12px; color: #575166; text-align: center; }
+@media (max-width: 560px) { .sheet { padding: 24px 20px; } .p-head h1 { font-size: 24px; } }
+
+@media print {
+  @page { margin: 16mm 15mm; }
+  :root, :root[data-theme] { color-scheme: light !important; --ground: #FFFFFF; }
+  html, body { background: #FFFFFF !important; }
+  .no-print, .theme-switch { display: none !important; }
+  .page.print-page { max-width: none; min-height: 0; padding: 0; gap: 0; display: block; }
+  .sheet { box-shadow: none !important; border-radius: 0; padding: 0; font-size: 11.5pt; }
+  .p-q { gap: 0; }
+}

@@ -35,6 +35,14 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 5. Runs without me: static site, broadcast only, nothing to clean up.
 6. Free and open: AGPL-3.0, public repo, costs stated.
 
+## Print / save as PDF (2026-11-03)
+- Ellen's reason: "I made a great quiz yesterday, I wish I could've downloaded it." Printing was chosen over a data file + import for now.
+- View `print` (`openPrint(quiz, onBack)`), reached from: built-in quiz card ("Skriv ut"), print icon on each "Mina quiz" row, the editor ("Skriv ut eller spara som PDF") and the share-link import page.
+- Two versions, last choice remembered in `eq:print`: **Med svar** (quizmaster: ✓ RÄTT SVAR, sort order as letters + words, "Visste du?") and **Svarsblad till lagen** (no answers, tick boxes, "Lag: ___", "Ordning: ___", "Antal rätt: ___ av N").
+- Sort items on paper use a deterministic shuffle (`paperOrder`, seeded by number + prompt), never the right order, same every print.
+- Uses the browser's print dialog (`window.print()`), so "Save as PDF" works everywhere and nothing leaves the device. The sheet is white paper in both themes; `@media print` hides the controls and forces `color-scheme: light`.
+- Still open: keeping quizzes so they don't disappear (backup file + "open file", or something else).
+
 ## Protocol
 - Phone → host: `{t:'hello', pid, name}` (repeated every 3 s until the host lists the pid), `{t:'answer', pid, i, a}`.
 - Host → all: `{t:'state', phase, i, n, ids, got, locked, q?, rem?, reveal?, scores?, top?}` on every change + every 4 s; `{t:'end'}`.
@@ -54,6 +62,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Pentest of all Ellenial apps, run from its own project (decided 2026-10-30). For this app: public broadcast channel with the publishable key (encrypted, but floodable), headers/CSP. Library cards on ellenial.app stay unlinked during early alpha.
 
 ## Status
+- 2026-11-03: Print / save as PDF built on branch `staging` (not yet on `main`). Playwright + axe in light and dark, phone width: no violations, no console errors; PDFs checked through print media in both themes.
 - 2026-11-01: Brand update (palette incl. Periwinkle, DM Sans, Auto/Ljust/Mörkt, accessibility rules) reviewed on branch `staging`, then shipped to `main` / quiz.ellenial.app the same evening on Ellen's yes. Playwright + axe in both themes, phone and 1366×768: no contrast violations, all controls ≥ 3:1, no console errors.
 - 2026-10-30: v1 built, tested locally (Playwright) and live, deployed to quiz.ellenial.app (Vercel project `ellenial-quiz`, auto-deploys from `main`).
 - 2026-10-30 evening: Ellen's own test round worked. Listed in the ellenial.app library as "Early alpha" (icon `site/icons/quiz.png` in the ellenial repo).

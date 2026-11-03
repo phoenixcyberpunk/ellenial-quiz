@@ -63,7 +63,8 @@
     down: '<path d="M6 9l6 6 6-6"/>',
     check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
     full: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
-    copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>'
+    copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',
+    print: '<path d="M7 9V3h10v6M7 17H4v-7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v7h-3"/><rect x="7" y="14" width="10" height="7" rx="1"/>'
   };
   function icon(name, size) {
     var s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -328,6 +329,7 @@
       : v === 'edit' ? viewEdit()
       : v === 'import' ? viewImport()
       : v === 'privacy' ? viewPrivacy()
+      : v === 'print' ? viewPrint()
       : viewHome();
     app.appendChild(el);
     if (v === 'host' || v === 'player') startTimer();
@@ -364,7 +366,8 @@
           h('h2', { text: q.name }),
           q.intro ? h('p', { text: q.intro }) : null,
           h('p', { class: 'small muted', text: plural(n, 'fråga', 'frågor') + (q.bonus ? ' + bonusrunda' : '') }),
-          h('button', { class: 'btn block', style: 'margin-top:6px', onclick: function () { openSetup(q); } }, 'Spela'));
+          h('button', { class: 'btn block', style: 'margin-top:6px', onclick: function () { openSetup(q); } }, 'Spela'),
+          h('button', { class: 'btn soft block', onclick: function () { openPrint(q, function () { go('home'); }); } }, icon('print'), 'Skriv ut'));
       }),
       mine.length ? h('div', { class: 'group' },
         h('h2', { class: 'label', text: 'Mina quiz' }),
@@ -372,6 +375,9 @@
           return h('div', { class: 'row-card' },
             h('div', null, h('div', { class: 'name', text: m.quiz.name }), h('div', { class: 'small muted', text: plural(m.quiz.questions.length, 'fråga', 'frågor') })),
             h('div', { class: 'row-actions' },
+              h('button', { class: 'round', 'aria-label': 'Skriv ut ' + (m.quiz.name || 'quizet'), title: 'Skriv ut', onclick: function () {
+                var c = cleanQuiz(m.quiz); if (c) openPrint(c, function () { go('home'); }); else go('edit', { draft: m });
+              } }, icon('print')),
               h('button', { class: 'btn soft', onclick: function () { go('edit', { draft: JSON.parse(JSON.stringify(m)) }); } }, 'Ändra'),
               h('button', { class: 'btn', onclick: function () { var c = cleanQuiz(m.quiz); if (c) openSetup(c); else go('edit', { draft: m }); } }, 'Spela')));
         })) : null,
@@ -1066,11 +1072,105 @@
           save();
           shareQuiz(c).then(function (r) { msg.textContent = r === 'copied' ? 'Länken är kopierad. Klistra in den där du vill dela.' : r === 'shared' ? 'Delat!' : ''; });
         } }, icon('link'), 'Dela som länk'),
-        h('p', { class: 'small muted', style: 'margin:0;text-align:center', text: 'Sparas automatiskt, bara på den här telefonen. Länken innehåller hela quizet, så den som får den kan spela och ändra en egen kopia.' }),
+        h('button', { class: 'btn soft block', onclick: function () {
+          var c = ready(); if (!c) return;
+          save();
+          var back = JSON.parse(JSON.stringify(d));
+          openPrint(c, function () { go('edit', { draft: back }); });
+        } }, icon('print'), 'Skriv ut eller spara som PDF'),
+        h('p', { class: 'small muted', style: 'margin:0;text-align:center', text: 'Sparas automatiskt, bara på den här telefonen. Länken innehåller hela quizet, så den som får den kan spela och ändra en egen kopia. Vill du ha quizet kvar för alltid: skriv ut det eller spara som PDF.' }),
         h('button', { class: 'btn danger block', onclick: function () {
           if (!confirm('Ta bort quizet från den här telefonen?')) return;
           saveMyQuizzes(myQuizzes().filter(function (x) { return x.id !== d.id; })); go('home');
         } }, 'Ta bort quizet')));
+  }
+
+
+  /* ----- Print / save as PDF ----- */
+  // A paper version of any quiz: the quizmaster's copy (with answers) or a sheet for the teams
+  // (without, with room to write). Built from the browser's own print dialog, so "Save as PDF"
+  // works everywhere and nothing leaves the device.
+  function openPrint(quiz, onBack) {
+    var last = store('eq:print');
+    go('print', { quiz: quiz, answers: last !== 'blank', back: onBack });
+  }
+  // Same order every time for the same question, never the right order (the paper must not give it away).
+  function paperOrder(q, qi) {
+    var n = q.items.length, seed = 7 + qi * 31;
+    for (var c = 0; c < q.prompt.length; c++) seed = (seed * 33 + q.prompt.charCodeAt(c)) % 2147483647;
+    var order = q.items.map(function (_, i) { return i; });
+    for (var i = n - 1; i > 0; i--) {
+      seed = (seed * 48271) % 2147483647;
+      var j = seed % (i + 1), t = order[i]; order[i] = order[j]; order[j] = t;
+    }
+    if (order.every(function (v, k) { return v === k; })) order.push(order.shift());
+    return order;
+  }
+  function paperQuestion(q, num, answers) {
+    var mark = function (ok) { return ok && answers ? h('span', { class: 'p-right' }, '✓ ', h('span', { class: 'sr-print', text: 'rätt svar' })) : null; };
+    var body;
+    if (q.type === 'mc') {
+      body = h('ol', { class: 'p-opts', type: 'A' }, q.options.map(function (o, oi) {
+        var ok = q.answer === oi;
+        return h('li', { class: ok && answers ? 'is-right' : '' },
+          answers ? null : h('span', { class: 'p-box', 'aria-hidden': 'true' }),
+          h('span', { class: 'p-letter', text: LETTERS[oi] }), h('span', { text: o }), mark(ok));
+      }));
+    } else if (q.type === 'tf') {
+      body = h('ol', { class: 'p-opts p-tf' }, [true, false].map(function (v) {
+        var ok = q.answer === v;
+        return h('li', { class: ok && answers ? 'is-right' : '' },
+          answers ? null : h('span', { class: 'p-box', 'aria-hidden': 'true' }),
+          h('span', { text: v ? 'Sant' : 'Falskt' }), mark(ok));
+      }));
+    } else {
+      var order = paperOrder(q, num);
+      var seq = q.items.map(function (_, k) { return LETTERS[order.indexOf(k)]; });
+      body = h('div', null,
+        h('ol', { class: 'p-opts', type: 'A' }, order.map(function (idx, k) {
+          return h('li', null, h('span', { class: 'p-letter', text: LETTERS[k] }), h('span', { text: q.items[idx] }));
+        })),
+        answers
+          ? h('p', { class: 'p-answer' }, h('strong', { text: 'Rätt ordning: ' }), seq.join(' – '),
+              h('span', { class: 'p-sub', text: ' (' + q.items.join(', ') + ')' }))
+          : h('p', { class: 'p-write' }, 'Ordning: ', q.items.map(function () { return h('span', { class: 'p-blank' }); })));
+    }
+    return h('li', { class: 'p-q' },
+      h('p', { class: 'p-prompt' }, h('span', { class: 'p-num', text: num + '.' }), ' ', q.prompt,
+        h('span', { class: 'p-type', text: q.type === 'mc' ? ' · Flerval' : q.type === 'tf' ? ' · Sant eller falskt' : ' · Sortera' })),
+      body,
+      answers && q.explain ? h('p', { class: 'p-explain' }, h('strong', { text: 'Visste du? ' }), q.explain) : null);
+  }
+  function viewPrint() {
+    var quiz = state.quiz, answers = state.answers;
+    function setAnswers(v) { store('eq:print', v ? 'answers' : 'blank'); state.answers = v; render(); }
+    var n = quiz.questions.length, num = 0;
+    var sheet = h('article', { class: 'sheet', 'aria-label': 'Förhandsvisning av utskriften' },
+      h('header', { class: 'p-head' },
+        h('p', { class: 'p-kicker', text: answers ? 'Frågeledarens version · med svar' : 'Svarsblad' }),
+        h('h1', { text: quiz.name }),
+        quiz.intro ? h('p', { class: 'p-intro', text: quiz.intro }) : null,
+        h('p', { class: 'p-meta', text: plural(n, 'fråga', 'frågor') + (quiz.bonus ? ' + bonusrunda' : '') }),
+        answers ? null : h('p', { class: 'p-write p-team' }, 'Lag: ', h('span', { class: 'p-blank wide' }))),
+      h('ol', { class: 'p-list' }, quiz.questions.map(function (q) { num++; return paperQuestion(q, num, answers); })),
+      quiz.bonus ? h('section', { class: 'p-bonus' },
+        h('h2', { text: quiz.bonus.name }),
+        quiz.bonus.intro ? h('p', { class: 'p-intro', text: quiz.bonus.intro }) : null,
+        h('ol', { class: 'p-list', start: String(num + 1) }, quiz.bonus.questions.map(function (q) { num++; return paperQuestion(q, num, answers); }))) : null,
+      answers ? null : h('p', { class: 'p-write p-score' }, 'Antal rätt: ', h('span', { class: 'p-blank' }), ' av ' + num),
+      h('footer', { class: 'p-foot', text: 'Gjort med quiz · Ellenial — quiz.ellenial.app' }));
+    return h('div', { class: 'page print-page' },
+      h('div', { class: 'no-print group' },
+        backHead('Skriv ut', state.back),
+        h('div', { class: 'seg', role: 'group', 'aria-label': 'Vilken version' },
+          h('button', { 'aria-pressed': String(answers), onclick: function () { setAnswers(true); } }, 'Med svar'),
+          h('button', { 'aria-pressed': String(!answers), onclick: function () { setAnswers(false); } }, 'Svarsblad till lagen')),
+        h('p', { class: 'small muted', style: 'margin:0', text: answers
+          ? 'Till dig som leder quizet: alla frågor med rätt svar och "Visste du?".'
+          : 'Till lagen: frågorna utan svar, med plats att skriva. Skriv ut ett per lag.' }),
+        h('button', { class: 'btn block', onclick: function () { window.print(); } }, icon('print'), 'Skriv ut eller spara som PDF'),
+        h('p', { class: 'small muted', style: 'margin:0;text-align:center', text: 'Välj "Spara som PDF" i utskriftsrutan för att ha quizet kvar som fil. Inget skickas någonstans.' })),
+      sheet);
   }
 
   /* ----- Import from a share link ----- */
@@ -1090,6 +1190,7 @@
       h('button', { class: 'btn ghost block', onclick: function () {
         upsertMyQuiz({ id: randomB64u(9), quiz: q }); go('home');
       } }, 'Spara i mina quiz'),
+      h('button', { class: 'btn soft block', onclick: function () { openPrint(q, function () { go('import', { quiz: q }); }); } }, icon('print'), 'Skriv ut'),
       h('p', { class: 'foot', text: 'Quizet låg i länken och har inte skickats till någon server.' }));
   }
 
