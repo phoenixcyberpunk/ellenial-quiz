@@ -57,3 +57,5 @@ A static site on Vercel's free tier plus Supabase's free tier (shared with my ot
 ## Licence
 
 AGPL-3.0-only, the same as the Ellenial site. See `LICENSE`.
+
+The Ellenial name and logo aren't covered by the code licence, see [TRADEMARK.md](TRADEMARK.md).
