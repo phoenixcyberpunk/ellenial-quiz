@@ -2,7 +2,8 @@
    A quiz to play together: on one shared screen, or with everyone answering on their own phone.
    No accounts, no database. Phones talk to the shared screen through Supabase Realtime broadcast
    (messages pass through, nothing is stored), and every message is encrypted with a key that only
-   lives in the join link after '#'. Own quizzes stay on this phone, or travel inside a share link. */
+   lives in the join link after '#'. Own quizzes are never saved here: they live only in the PDF you
+   download, which carries the whole quiz and can be opened here again (decided by Ellen, 5 Nov 2026). */
 (function () {
   'use strict';
 
@@ -64,6 +65,8 @@
     check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
     full: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
     copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',
+    download: '<path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/>',
+    file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
     print: '<path d="M7 9V3h10v6M7 17H4v-7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v7h-3"/><rect x="7" y="14" width="10" height="7" rx="1"/>'
   };
   function icon(name, size) {
@@ -281,12 +284,7 @@
     var list = store('eq:quizzes');
     return Array.isArray(list) ? list.filter(function (x) { return x && x.id && x.quiz; }) : [];
   }
-  function saveMyQuizzes(list) { store('eq:quizzes', list); }
-  function upsertMyQuiz(entry) {
-    var list = myQuizzes(), i = list.findIndex(function (x) { return x.id === entry.id; });
-    if (i >= 0) list[i] = entry; else list.unshift(entry);
-    saveMyQuizzes(list);
-  }
+
 
   function packQuiz(quiz) {
     var json = JSON.stringify(quiz);
@@ -305,16 +303,7 @@
     else p = new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
     return p.then(function (s) { return s.length > 200000 ? null : cleanQuiz(JSON.parse(s)); }).catch(function () { return null; });
   }
-  function shareQuiz(quiz) {
-    return packQuiz(quiz).then(function (data) {
-      var url = shareOrigin() + '/q#' + data;
-      if (navigator.share) {
-        return navigator.share({ title: quiz.name, text: 'Ett quiz till dig: ' + quiz.name, url: url })
-          .then(function () { return 'shared'; }, function () { return copyText(url); });
-      }
-      return copyText(url);
-    });
-  }
+
   function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       return navigator.clipboard.writeText(text).then(function () { return 'copied'; }, function () { return promptCopy(text); });
@@ -334,7 +323,7 @@
       : v === 'host' ? viewHost()
       : v === 'player' ? viewPlayer()
       : v === 'edit' ? viewEdit()
-      : v === 'import' ? viewImport()
+      : v === 'import' || v === 'opened' ? viewOpened()
       : v === 'privacy' ? viewPrivacy()
       : v === 'print' ? viewPrint()
       : viewHome();
@@ -350,19 +339,71 @@
     return h('div', { class: 'bar' },
       h('a', { class: 'brand', href: '/', onclick: function (e) { e.preventDefault(); go('home'); } },
         h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { text: 'quiz' })),
-      themeButton());
+      h('div', { class: 'bar-right' }, themeButton(), helpButton()));
   }
   function backHead(title, onBack) {
     return h('div', { class: 'bar' },
       h('div', { class: 'bar-left' },
         h('button', { class: 'round', 'aria-label': 'Tillbaka', onclick: onBack || function () { go('home'); } }, icon('back')),
         h('h1', { text: title })),
-      themeButton());
+      h('div', { class: 'bar-right' }, themeButton(), helpButton()));
+  }
+  // The shared Ellenial "?" (ellenial-help.js, decided 8 Nov 2026): help only when someone asks for it.
+  // Every Ellenial app comes in Swedish and English (Ellen, 8 Nov): Quiz's screens are Swedish for now,
+  // so the help follows that; the English text is ready for when Quiz gets its language switch.
+  var LANG = 'sv';
+  var HELP = {
+    sv: { label: 'Så funkar det', title: 'Så funkar det', lead: 'Tre steg, sen är ni igång.', done: 'Uppfattat', close: 'Stäng', more: 'Mer om integritet',
+      steps: [
+        { title: 'Välj ett quiz', text: 'Ta ett färdigt eller gör ett eget. Egna quiz sparas inte här: de finns i PDF:en du laddar ner, och den kan du öppna här igen.' },
+        { title: 'Välj hur ni spelar', text: 'Alla tittar på en delad skärm (tv eller projektor), eller så svarar alla på sin egen telefon via länk eller QR-kod.' },
+        { title: 'Spela och se resultatet', text: 'Rätt svar visas efter varje fråga. Ingen hamnar sist: alla lag visas med sina poäng.' }
+      ],
+      note: 'Inget sparas. När quizet tar slut eller fliken stängs är namn, svar och poäng borta.' },
+    en: { label: 'How it works', title: 'How it works', lead: "Three steps, then you're off.", done: 'Got it', close: 'Close', more: 'More about privacy',
+      steps: [
+        { title: 'Pick a quiz', text: "Take a ready-made one or make your own. Own quizzes aren't saved here: they live in the PDF you download, and you can open it here again." },
+        { title: 'Choose how you play', text: 'Everyone watches one shared screen (TV or projector), or everyone answers on their own phone with a link or QR code.' },
+        { title: 'Play and see the result', text: 'The right answer shows after each question. Nobody comes last: every team is shown with its points.' }
+      ],
+      note: 'Nothing is saved. When the quiz ends or the tab closes, names, answers and points are gone.' }
+  };
+  function helpButton() {
+    if (!window.EllenialHelp) return null;
+    var hp = HELP[LANG];
+    return EllenialHelp.button({ label: hp.label, onclick: function () {
+      var live = state.view === 'host' || state.view === 'player';
+      EllenialHelp.open({ title: hp.title, lead: hp.lead, image: '/icons/icon-192.png', steps: hp.steps, note: hp.note, done: hp.done, close: hp.close,
+        more: live ? null : { label: hp.more, onclick: function () { go('privacy'); } } });
+    } });
   }
 
   /* ----- Home ----- */
+  // Shown once, only to someone who still has quizzes saved in this browser from before 8 Nov 2026.
+  // Nothing is removed until they tap "Klar, ta bort dem härifrån".
+  function moveNotice(mine) {
+    var note = h('p', { class: 'small', role: 'status', style: 'margin:0' });
+    return h('section', { class: 'move-notice', 'aria-labelledby': 'move-title' },
+      h('h2', { id: 'move-title', text: 'Dina quiz flyttar till PDF' }),
+      h('p', { class: 'small muted', style: 'margin:0', text: 'Från och med nu sparas inga quiz i webbläsaren. Du har ' + plural(mine.length, 'quiz', 'quiz') + ' sparade här. Ladda ner dem som PDF så har du kvar dem och kan öppna dem här igen.' }),
+      h('ul', { class: 'move-list' }, mine.map(function (m) {
+        return h('li', null, h('span', { text: m.quiz.name || 'Namnlöst quiz' }), h('span', { class: 'small muted', text: plural((m.quiz.questions || []).length, 'fråga', 'frågor') }));
+      })),
+      h('button', { class: 'btn block', onclick: function () {
+        var chain = Promise.resolve(), n = 0;
+        mine.forEach(function (m) {
+          var c = cleanQuiz(m.quiz);
+          if (c) chain = chain.then(function () { n++; return downloadQuizPdf(c, true); }).then(function () { return new Promise(function (r) { setTimeout(r, 400); }); });
+        });
+        chain.then(function () { note.textContent = n ? plural(n, 'quiz', 'quiz') + ' nedladdade. Kolla att filerna finns innan du tar bort dem här.' : 'Inga av dem var klara att spela, så det fanns inget att ladda ner.'; });
+      } }, icon('download'), mine.length === 1 ? 'Ladda ner som PDF' : mine.length === 2 ? 'Ladda ner båda som PDF' : 'Ladda ner alla som PDF'),
+      h('button', { class: 'btn ghost block', onclick: function () { store('eq:quizzes', null); go('home'); } }, 'Klar, ta bort dem härifrån'),
+      note,
+      h('p', { class: 'small muted', style: 'margin:0', text: 'Inget tas bort förrän du trycker där.' }));
+  }
   function viewHome() {
     var mine = myQuizzes();
+    var picker = pdfPicker(function (q) { go('opened', { quiz: q, source: 'pdf' }); });
     return h('div', { class: 'page' },
       brandHead(),
       h('h1', { class: 'big', text: 'Vad ska vi quizza om idag?' }),
@@ -376,22 +417,16 @@
           h('button', { class: 'btn block', style: 'margin-top:6px', onclick: function () { openSetup(q); } }, 'Spela'),
           h('button', { class: 'btn soft block', onclick: function () { openPrint(q, function () { go('home'); }); } }, icon('print'), 'Skriv ut'));
       }),
-      mine.length ? h('div', { class: 'group' },
-        h('h2', { class: 'label', text: 'Mina quiz' }),
-        mine.map(function (m) {
-          return h('div', { class: 'row-card' },
-            h('div', null, h('div', { class: 'name', text: m.quiz.name }), h('div', { class: 'small muted', text: plural(m.quiz.questions.length, 'fråga', 'frågor') })),
-            h('div', { class: 'row-actions' },
-              h('button', { class: 'round', 'aria-label': 'Skriv ut ' + (m.quiz.name || 'quizet'), title: 'Skriv ut', onclick: function () {
-                var c = cleanQuiz(m.quiz); if (c) openPrint(c, function () { go('home'); }); else go('edit', { draft: m });
-              } }, icon('print')),
-              h('button', { class: 'btn soft', onclick: function () { go('edit', { draft: JSON.parse(JSON.stringify(m)) }); } }, 'Ändra'),
-              h('button', { class: 'btn', onclick: function () { var c = cleanQuiz(m.quiz); if (c) openSetup(c); else go('edit', { draft: m }); } }, 'Spela')));
-        })) : null,
-      h('button', { class: 'btn ghost block', onclick: function () { go('edit', { draft: newDraft() }); } }, icon('plus'), 'Skapa eget quiz'),
+      mine.length ? moveNotice(mine) : null,
+      h('div', { class: 'group' },
+        h('h2', { class: 'label', text: 'Egna quiz' }),
+        h('button', { class: 'btn ghost block', onclick: function () { go('edit', { draft: newDraft() }); } }, icon('plus'), 'Skapa eget quiz'),
+        picker,
+        h('button', { class: 'btn ghost block', onclick: function () { picker.click(); } }, icon('file'), 'Öppna ett quiz-PDF'),
+        h('p', { class: 'small muted', style: 'margin:0', text: 'Egna quiz sparas inte här. De finns bara i PDF:en du laddar ner, och den kan du öppna här igen när du vill spela eller ändra.' })),
       h('p', { class: 'foot' },
         'Inget konto. Inget sparas hos mig.', h('br'),
-        'Egna quiz finns bara på den här telefonen eller i länken du delar.', h('br'),
+        'Egna quiz finns bara i PDF:en du laddar ner.', h('br'),
         h('a', { href: '#', onclick: function (e) { e.preventDefault(); go('privacy'); } }, 'Så fungerar det'), ' · ',
         h('a', { href: 'https://ellenial.app', rel: 'noopener' }, 'Ellenial'), ' · ',
         h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-quiz', rel: 'noopener' }, 'Öppen källkod')));
@@ -409,7 +444,7 @@
         h('p', { style: 'margin:0', text: 'När quizet avslutas eller fliken stängs försvinner allt: namn, svar och poäng.' })),
       h('div', { class: 'group' },
         h('h2', { class: 'label', text: 'Egna quiz' }),
-        h('p', { style: 'margin:0', text: 'Sparas bara i den här webbläsaren. När du delar ett quiz ligger hela quizet i länken, efter #, och skickas aldrig till någon server.' })),
+        h('p', { style: 'margin:0', text: 'Sparas aldrig här. Ett eget quiz finns bara i PDF:en du laddar ner. Den görs på telefonen och bär hela quizet, så du kan öppna den här igen för att spela eller ändra. Inget skickas till någon server.' })),
       h('div', { class: 'group' },
         h('h2', { class: 'label', text: 'Kostnader' }),
         h('p', { style: 'margin:0', text: 'En statisk sida på Vercel och Supabase gratisnivå, samma som mina andra appar. Alltså nära noll kronor.' })),
@@ -1034,8 +1069,23 @@
   }
   function viewEdit() {
     var d = state.draft, quiz = d.quiz;
-    function save() { upsertMyQuiz({ id: d.id, quiz: quiz }); }
-    function rerender() { save(); render(); }
+    // Nothing is saved here any more: edits live in memory until the quiz is downloaded as a PDF.
+    function save() {}
+    function rerender() { render(); }
+    function dirty() { return sigOf(quiz) !== d.savedSig; }
+    var answersPdf = d.pdfAnswers !== false;
+    function download(then) {
+      var c = ready(); if (!c) return;
+      downloadQuizPdf(c, answersPdf).then(function () {
+        d.savedSig = sigOf(quiz);
+        msg.textContent = 'Nedladdad. Öppna PDF:en här igen för att spela eller ändra.';
+        if (then) then();
+      });
+    }
+    function leave(to) {
+      if (!dirty() || !quiz.questions.some(function (q) { return q.prompt; })) return to();
+      askLeave(quiz.name, function () { download(to); }, to);
+    }
     var msg = h('p', { class: 'small', role: 'status', style: 'margin:0;text-align:center;min-height:1.4em' });
     function ready() {
       var c = cleanQuiz(quiz);
@@ -1105,7 +1155,7 @@
           h('input', { class: 'input', value: q.explain || '', maxlength: LIMITS.explain, oninput: function (e) { q.explain = e.target.value; save(); } })));
     });
     return h('div', { class: 'page' },
-      backHead(quiz.name || 'Nytt quiz'),
+      backHead(quiz.name || 'Nytt quiz', function () { leave(function () { go('home'); }); }),
       h('label', { class: 'field' }, h('span', { class: 'label', text: 'Namn på quizet' }),
         h('input', { class: 'input', value: quiz.name, maxlength: LIMITS.quizName, placeholder: 'T.ex. Fredagsfika-quizet', oninput: function (e) { quiz.name = e.target.value; save(); } })),
       cards,
@@ -1118,24 +1168,238 @@
       h('div', { class: 'group', style: 'margin-top:auto' },
         msg,
         h('button', { class: 'btn block', onclick: function () { var c = ready(); if (c) { save(); openSetup(c); } } }, 'Spela'),
-        h('button', { class: 'btn ghost block', onclick: function () {
-          var c = ready(); if (!c) return;
-          save();
-          shareQuiz(c).then(function (r) { msg.textContent = r === 'copied' ? 'Länken är kopierad. Klistra in den där du vill dela.' : r === 'shared' ? 'Delat!' : ''; });
-        } }, icon('link'), 'Dela som länk'),
-        h('button', { class: 'btn soft block', onclick: function () {
-          var c = ready(); if (!c) return;
-          save();
-          var back = JSON.parse(JSON.stringify(d));
-          openPrint(c, function () { go('edit', { draft: back }); });
-        } }, icon('print'), 'Skriv ut eller spara som PDF'),
-        h('p', { class: 'small muted', style: 'margin:0;text-align:center', text: 'Sparas automatiskt, bara på den här telefonen. Länken innehåller hela quizet, så den som får den kan spela och ändra en egen kopia. Vill du ha quizet kvar för alltid: skriv ut det eller spara som PDF.' }),
-        h('button', { class: 'btn danger block', onclick: function () {
-          if (!confirm('Ta bort quizet från den här telefonen?')) return;
-          saveMyQuizzes(myQuizzes().filter(function (x) { return x.id !== d.id; })); go('home');
-        } }, 'Ta bort quizet')));
+        h('section', { class: 'save-panel', 'aria-labelledby': 'save-title' },
+          h('h2', { id: 'save-title', text: 'Spara ditt quiz' }),
+          h('p', { class: 'small muted', style: 'margin:0', text: 'Quizet sparas inte här. Ladda ner PDF:en innan du stänger, annars är det borta. Öppna PDF:en här igen för att spela eller ändra.' }),
+          h('div', { class: 'seg', role: 'group', 'aria-label': 'Vilken version' },
+            h('button', { 'aria-pressed': String(answersPdf), onclick: function () { d.pdfAnswers = true; render(); } }, 'Med svar'),
+            h('button', { 'aria-pressed': String(!answersPdf), onclick: function () { d.pdfAnswers = false; render(); } }, 'Svarsblad till lagen')),
+          h('button', { class: 'btn block', onclick: function () { download(); } }, icon('download'), 'Ladda ner PDF'),
+          h('button', { class: 'btn link', style: 'align-self:center', onclick: function () {
+            var c = ready(); if (!c) return;
+            var back = JSON.parse(JSON.stringify(d));
+            openPrint(c, function () { go('edit', { draft: back }); });
+          } }, 'Se hur PDF:en ser ut'),
+          h('p', { class: 'small muted', style: 'margin:0', text: 'Båda versionerna går att öppna här igen.' }))));
   }
 
+
+
+  /* ----- Own quizzes live only in PDFs (decided by Ellen, 5 Nov 2026; built 8 Nov) -----
+     Nothing is saved in the browser. "Ladda ner PDF" draws the quiz onto A4 pages on this phone
+     (canvas, the brand fonts) and writes a PDF by hand, with the whole quiz packed into one comment
+     line (%EllenialQuiz:z.<deflate-raw base64url>). Opening that PDF here again reads only that
+     line, runs it through cleanQuiz, and the quiz is back. Same idea as ellenial bingo. */
+  var PDF_MARK = '%EllenialQuiz:';
+  var PW = 1240, PH = 1754, PM = 104;   // A4 at 150 dpi, margins
+  var INK = '#1F1A2E', MUTED = '#575166', ACCENT = '#342E86', SOFT = '#F1EAF8';
+  var SERIF = 'Fraunces, Georgia, serif', SANS = '"DM Sans", system-ui, sans-serif';
+
+  function quizFontsReady() {
+    if (!document.fonts || !document.fonts.load) return Promise.resolve();
+    return Promise.all(['600 40px Fraunces', '400 26px "DM Sans"', '500 26px "DM Sans"', '700 26px "DM Sans"']
+      .map(function (f) { return document.fonts.load(f); })).catch(function () {});
+  }
+  function wrapText(ctx, text, max) {
+    var words = String(text).split(/\s+/), lines = [], line = '';
+    words.forEach(function (w) {
+      while (ctx.measureText(w).width > max && w.length > 1) {
+        var cut = w.length - 1;
+        while (cut > 1 && ctx.measureText(w.slice(0, cut) + '-').width > max) cut--;
+        if (line) { lines.push(line); line = ''; }
+        lines.push(w.slice(0, cut) + '-'); w = w.slice(cut);
+      }
+      var t = line ? line + ' ' + w : w;
+      if (line && ctx.measureText(t).width > max) { lines.push(line); line = w; } else line = t;
+    });
+    if (line) lines.push(line);
+    return lines;
+  }
+  // A block of text lines: [{ font, color, text, indent, gap }] measured once, drawn later.
+  function textBlock(ctx, parts) {
+    var rows = [], height = 0;
+    parts.forEach(function (p) {
+      ctx.font = p.font;
+      var size = parseInt(p.font.match(/(\d+)px/)[1], 10), lh = Math.round(size * (p.lh || 1.35));
+      var lines = wrapText(ctx, p.text, PW - PM * 2 - (p.indent || 0));
+      height += p.before || 0;
+      lines.forEach(function (l, i) { rows.push({ font: p.font, color: p.color || INK, text: l, x: PM + (p.indent || 0), y: height + size, mark: i === 0 ? p.mark : null, size: size }); height += lh; });
+    });
+    return { height: height, draw: function (c, top) {
+      rows.forEach(function (r) {
+        c.font = r.font; c.fillStyle = r.color; c.fillText(r.text, r.x, top + r.y);
+        if (r.mark === 'box') { c.strokeStyle = INK; c.lineWidth = 3; c.strokeRect(r.x - 52, top + r.y - r.size * 0.82, r.size * 0.85, r.size * 0.85); }
+        if (r.mark === 'tick') {
+          c.strokeStyle = ACCENT; c.lineWidth = 5; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath();
+          var x = r.x - 54, y = top + r.y - r.size * 0.4; c.moveTo(x, y); c.lineTo(x + 9, y + 10); c.lineTo(x + 28, y - 12); c.stroke();
+        }
+      });
+    } };
+  }
+  function quizBlocks(ctx, quiz, answers) {
+    var blocks = [], n = quiz.questions.length + (quiz.bonus ? quiz.bonus.questions.length : 0), num = 0;
+    var head = [
+      { font: '500 24px ' + SANS, color: MUTED, text: answers ? 'Frågeledarens version · med svar' : 'Svarsblad' },
+      { font: '600 60px ' + SERIF, text: quiz.name, before: 10, lh: 1.15 }
+    ];
+    if (quiz.intro) head.push({ font: '400 26px ' + SANS, color: MUTED, text: quiz.intro, before: 8 });
+    head.push({ font: '500 24px ' + SANS, color: MUTED, text: plural(n, 'fråga', 'frågor') + (quiz.bonus ? ' + bonusrunda' : ''), before: 8 });
+    if (!answers) head.push({ font: '500 28px ' + SANS, text: 'Lag: ______________________________', before: 24 });
+    blocks.push(textBlock(ctx, head));
+    function question(q) {
+      num++;
+      var type = q.type === 'mc' ? 'Flerval' : q.type === 'tf' ? 'Sant eller falskt' : 'Sortera';
+      var parts = [{ font: '500 30px ' + SANS, text: num + '. ' + q.prompt + '  · ' + type, before: 34 }];
+      if (q.type === 'mc' || q.type === 'tf') {
+        var opts = q.type === 'mc' ? q.options : ['Sant', 'Falskt'];
+        opts.forEach(function (o, oi) {
+          var right = q.type === 'mc' ? q.answer === oi : q.answer === (oi === 0);
+          parts.push({ font: (answers && right ? '700 ' : '400 ') + '27px ' + SANS, text: (q.type === 'mc' ? LETTERS[oi] + '   ' : '') + o + (answers && right ? '   (rätt svar)' : ''),
+            indent: 70, before: 6, mark: answers ? (right ? 'tick' : null) : 'box' });
+        });
+      } else {
+        var order = paperOrder(q, q.fixed ? 0 : num);
+        order.forEach(function (idx, k) { parts.push({ font: '400 27px ' + SANS, text: LETTERS[k] + '   ' + q.items[idx], indent: 70, before: 6 }); });
+        if (answers) {
+          var seq = q.items.map(function (_, k) { return LETTERS[order.indexOf(k)]; }).join(' – ');
+          parts.push({ font: '700 26px ' + SANS, text: 'Rätt ordning: ' + seq, indent: 70, before: 10 });
+        } else parts.push({ font: '400 27px ' + SANS, text: 'Ordning: ' + q.items.map(function () { return '____'; }).join('  '), indent: 70, before: 12 });
+      }
+      if (answers && q.explain) parts.push({ font: '400 24px ' + SANS, color: MUTED, text: 'Visste du? ' + q.explain, indent: 70, before: 10 });
+      blocks.push(textBlock(ctx, parts));
+    }
+    quiz.questions.forEach(question);
+    if (quiz.bonus) {
+      var bh = [{ font: '600 42px ' + SERIF, text: quiz.bonus.name, before: 48 }];
+      if (quiz.bonus.intro) bh.push({ font: '400 26px ' + SANS, color: MUTED, text: quiz.bonus.intro, before: 6 });
+      blocks.push(textBlock(ctx, bh));
+      quiz.bonus.questions.forEach(question);
+    }
+    if (!answers) blocks.push(textBlock(ctx, [{ font: '500 28px ' + SANS, text: 'Antal rätt: ______ av ' + n, before: 44 }]));
+    return blocks;
+  }
+  function drawQuizPages(quiz, answers) {
+    var probe = document.createElement('canvas').getContext('2d');
+    var blocks = quizBlocks(probe, quiz, answers), pages = [], page = [], y = PM, bottom = PH - PM - 40;
+    blocks.forEach(function (b) {
+      if (y + b.height > bottom && page.length) { pages.push(page); page = []; y = PM; }
+      page.push({ b: b, y: y }); y += b.height;
+    });
+    if (page.length) pages.push(page);
+    return pages.map(function (items, pi) {
+      var cv = document.createElement('canvas'); cv.width = PW; cv.height = PH;
+      var c = cv.getContext('2d'); c.fillStyle = '#FFFFFF'; c.fillRect(0, 0, PW, PH); c.textBaseline = 'alphabetic';
+      items.forEach(function (it) { it.b.draw(c, it.y); });
+      c.font = '400 20px ' + SANS; c.fillStyle = MUTED;
+      c.fillText('Gjort med quiz · Ellenial · quiz.ellenial.app', PM, PH - PM + 30);
+      c.textAlign = 'right'; c.fillText('Sida ' + (pi + 1) + ' av ' + pages.length, PW - PM, PH - PM + 30); c.textAlign = 'left';
+      return cv;
+    });
+  }
+  function canvasJpeg(cv) {
+    var bin = atob(cv.toDataURL('image/jpeg', 0.9).split(',')[1]), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function asciiPdf(s) {
+    return '(' + String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\x20-\x7e]/g, '').replace(/([()\\])/g, '\\$1') + ')';
+  }
+  function writePdf(pages, title, payload) {
+    var parts = [], len = 0, offsets = [];
+    function push(x) { var b = typeof x === 'string' ? enc.encode(x) : x; parts.push(b); len += b.length; }
+    function obj(id, body) { offsets[id] = len; push(id + ' 0 obj\n'); if (typeof body === 'string') push(body); else body(); push('\nendobj\n'); }
+    push('%PDF-1.4\n'); push(PDF_MARK + payload + '\n');
+    var w = 595.28, hgt = 841.89, next = 4, kids = [];
+    var ids = pages.map(function (img) { var o = { page: next++, content: next++, img: next++, data: img }; kids.push(o.page); return o; });
+    obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+    obj(2, '<< /Type /Pages /Count ' + pages.length + ' /Kids [' + kids.map(function (k) { return k + ' 0 R'; }).join(' ') + '] >>');
+    obj(3, '<< /Title ' + asciiPdf(title) + ' /Producer (ellenial quiz, quiz.ellenial.app) /Creator (ellenial quiz) >>');
+    ids.forEach(function (o) {
+      obj(o.page, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + w + ' ' + hgt + '] /Resources << /XObject << /P ' + o.img + ' 0 R >> >> /Contents ' + o.content + ' 0 R >>');
+      var s = 'q ' + w + ' 0 0 ' + hgt + ' 0 0 cm /P Do Q\n';
+      obj(o.content, '<< /Length ' + s.length + ' >>\nstream\n' + s + 'endstream');
+      obj(o.img, function () {
+        push('<< /Type /XObject /Subtype /Image /Width ' + PW + ' /Height ' + PH + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + o.data.length + ' >>\nstream\n');
+        push(o.data); push('\nendstream');
+      });
+    });
+    var x = 'xref\n0 ' + next + '\n0000000000 65535 f \n';
+    for (var i = 1; i < next; i++) x += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+    var at = len;
+    push(x + 'trailer\n<< /Size ' + next + ' /Root 1 0 R /Info 3 0 R >>\nstartxref\n' + at + '\n%%EOF\n');
+    return new Blob(parts, { type: 'application/pdf' });
+  }
+  function quizPdfName(quiz, answers) {
+    var s = (quiz.name || 'quiz').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'quiz';
+    return s + (answers ? '-med-svar' : '-svarsblad') + '.pdf';
+  }
+  // Both versions carry the whole quiz, so either one can be opened here again.
+  function downloadQuizPdf(quiz, answers) {
+    return quizFontsReady().then(function () { return packQuiz(quiz); }).then(function (payload) {
+      var blob = writePdf(drawQuizPages(quiz, answers).map(canvasJpeg), quiz.name, payload);
+      var url = URL.createObjectURL(blob), a = h('a', { href: url, download: quizPdfName(quiz, answers) });
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    });
+  }
+  // Read only our own line from a PDF made here; everything in it goes through cleanQuiz.
+  function readQuizPdf(file) {
+    if (!file || file.size > 40 * 1024 * 1024) return Promise.resolve(null);
+    return file.slice(0, 512 * 1024).arrayBuffer().then(function (buf) {
+      var bytes = new Uint8Array(buf), s = '';
+      for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+      var m = s.match(/%EllenialQuiz:([jz]\.[A-Za-z0-9_-]{4,200000})/);
+      return m ? unpackQuiz(m[1]) : null;
+    }).catch(function () { return null; });
+  }
+  function pdfPicker(onQuiz) {
+    var input = h('input', { type: 'file', accept: 'application/pdf,.pdf', class: 'sr-only', tabindex: '-1', 'aria-hidden': 'true', onchange: function (e) {
+      var f = e.target.files && e.target.files[0]; if (!f) return;
+      readQuizPdf(f).then(onQuiz); e.target.value = '';
+    } });
+    return input;
+  }
+  function sigOf(quiz) { return JSON.stringify(quiz); }
+
+  // "Ladda ner quizet först?" when leaving an editor whose latest version isn't downloaded.
+  function askLeave(name, onDownload, onLeave) {
+    var d = h('dialog', { class: 'eh-sheet leave-ask', 'aria-labelledby': 'leave-title' });
+    function close() { if (d.open) d.close(); }
+    d.addEventListener('close', function () { d.remove(); });
+    d.append(
+      h('h2', { class: 'eh-title', id: 'leave-title', text: 'Ladda ner quizet först?' }),
+      h('p', { class: 'eh-lead', style: 'font-size:15px;line-height:1.45', text: 'Du har inte laddat ner "' + (name || 'quizet') + '". Inget sparas här, så lämnar du nu är quizet borta.' }),
+      h('button', { class: 'btn block', onclick: function () { close(); onDownload(); } }, icon('download'), 'Ladda ner PDF'),
+      h('button', { class: 'btn ghost block', onclick: close }, 'Stanna kvar'),
+      h('button', { class: 'btn link', style: 'align-self:center', onclick: function () { close(); onLeave(); } }, 'Lämna utan att spara'));
+    document.body.appendChild(d); d.showModal();
+  }
+
+  /* ----- An own quiz opened from a PDF (or an older share link) ----- */
+  function viewOpened() {
+    var q = state.quiz, fromLink = state.source === 'link';
+    if (!q) {
+      return h('div', { class: 'page' }, brandHead(),
+        h('div', { class: 'error', text: fromLink
+          ? 'Länken gick inte att läsa. Den kan ha blivit avklippt när den skickades. Be om den igen, eller be om quizets PDF.'
+          : 'Den filen är ingen quiz-PDF härifrån, så jag kunde inte läsa den.' }),
+        h('button', { class: 'btn block', onclick: function () { go('home'); } }, 'Till startsidan'));
+    }
+    var copy = function () { return JSON.parse(JSON.stringify(q)); };
+    return h('div', { class: 'page' }, backHead('quiz'),
+      h('p', { class: 'opened-ok', role: 'status' }, icon('check', 18), fromLink ? 'Quizet är öppnat från en länk' : 'Quizet är öppnat från din PDF'),
+      h('div', { class: 'quiz-card' },
+        h('h1', { class: 'big', style: 'font-size:28px;margin:0', text: q.name }),
+        h('p', { class: 'small muted', text: plural(q.questions.length, 'fråga', 'frågor') + (q.bonus ? ' + bonusrunda' : '') }),
+        h('button', { class: 'btn block', style: 'margin-top:6px', onclick: function () { openSetup(q); } }, 'Spela'),
+        h('button', { class: 'btn ghost block', onclick: function () {
+          var c = copy(); go('edit', { draft: { id: randomB64u(9), quiz: c, savedSig: fromLink ? null : sigOf(c) } });
+        } }, 'Ändra')),
+      fromLink ? h('button', { class: 'btn soft block', onclick: function () { downloadQuizPdf(q, true); } }, icon('download'), 'Ladda ner som PDF') : null,
+      h('p', { class: 'small muted', style: 'margin:0', text: fromLink
+        ? 'Delningslänkar görs inte längre. Ladda ner quizet som PDF om du vill ha kvar det. Det kom i länken och har inte skickats till någon server.'
+        : 'Ändrar du något? Ladda ner en ny PDF när du är klar. Den gamla PDF:en ändras inte.' }));
+  }
 
   /* ----- Print / save as PDF ----- */
   // A paper version of any quiz: the quizmaster's copy (with answers) or a sheet for the teams
@@ -1220,30 +1484,9 @@
         h('p', { class: 'small muted', style: 'margin:0', text: answers
           ? 'Till dig som leder quizet: alla frågor med rätt svar och "Visste du?".'
           : 'Till lagen: frågorna utan svar, med plats att skriva. Skriv ut ett per lag.' }),
-        h('button', { class: 'btn block', onclick: function () { window.print(); } }, icon('print'), 'Skriv ut eller spara som PDF'),
-        h('p', { class: 'small muted', style: 'margin:0;text-align:center', text: 'Välj "Spara som PDF" i utskriftsrutan för att ha quizet kvar som fil. Inget skickas någonstans.' })),
+        h('button', { class: 'btn block', onclick: function () { downloadQuizPdf(quiz, answers); } }, icon('download'), 'Ladda ner PDF'),
+        h('p', { class: 'small muted', style: 'margin:0;text-align:center', text: 'PDF:en görs här på telefonen och skickas ingenstans. Skriv ut den, eller öppna den här igen för att spela.' })),
       sheet);
-  }
-
-  /* ----- Import from a share link ----- */
-  function viewImport() {
-    var q = state.quiz;
-    if (!q) {
-      return h('div', { class: 'page' }, brandHead(),
-        h('div', { class: 'error', text: 'Länken gick inte att läsa. Den kan ha blivit avklippt när den skickades. Be om den igen.' }),
-        h('button', { class: 'btn block', onclick: function () { go('home'); } }, 'Till startsidan'));
-    }
-    return h('div', { class: 'page' }, brandHead(),
-      h('h1', { class: 'big', text: 'Någon har delat ett quiz med dig' }),
-      h('div', { class: 'quiz-card' },
-        h('h2', { text: q.name }),
-        h('p', { class: 'small muted', text: plural(q.questions.length, 'fråga', 'frågor') })),
-      h('button', { class: 'btn block', onclick: function () { openSetup(q); } }, 'Spela nu'),
-      h('button', { class: 'btn ghost block', onclick: function () {
-        upsertMyQuiz({ id: randomB64u(9), quiz: q }); go('home');
-      } }, 'Spara i mina quiz'),
-      h('button', { class: 'btn soft block', onclick: function () { openPrint(q, function () { go('import', { quiz: q }); }); } }, icon('print'), 'Skriv ut'),
-      h('p', { class: 'foot', text: 'Quizet låg i länken och har inte skickats till någon server.' }));
   }
 
   /* ---------------- start ---------------- */
@@ -1266,12 +1509,16 @@
     }).catch(function () {}).then(function () {
       if (path.indexOf('/q') === 0 && location.hash) {
         var hash = location.hash;
-        unpackQuiz(hash).then(function (q) { history.replaceState(null, '', '/' + location.search); go('import', { quiz: q }); });
+        unpackQuiz(hash).then(function (q) { history.replaceState(null, '', '/' + location.search); go('opened', { quiz: q, source: 'link' }); });
       } else go('home');
     });
   }
   window.addEventListener('beforeunload', function (e) {
     if (state.view === 'host' && state.game && state.game.phase !== 'results' && state.game.i >= 0) { e.preventDefault(); e.returnValue = ''; }
+    if (state.view === 'edit' && state.draft && sigOf(state.draft.quiz) !== state.draft.savedSig && state.draft.quiz.questions.some(function (q) { return q.prompt; })) { e.preventDefault(); e.returnValue = ''; }
   });
+  if ((location.hostname === 'localhost' || location.hostname === '127.0.0.1') && /[?&]test\b/.test(location.search)) {
+    window.__quiz = { drawQuizPages: drawQuizPages, readQuizPdf: readQuizPdf, packQuiz: packQuiz, writePdf: writePdf, canvasJpeg: canvasJpeg, quizFontsReady: quizFontsReady, state: function () { return state; } };
+  }
   boot();
 })();

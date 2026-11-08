@@ -1,0 +1,64 @@
+/* ellenial-help.css · shared Ellenial pattern (with ellenial-help.js) · AGPL-3.0
+   The "?" button and the "How it works" sheet. Reads the app's own colour variables, so it follows
+   Auto / Light / Dark. Copy unchanged into every Ellenial app. Apps name a few colours differently
+   (Party games: --bg, --card), so each surface falls back to those names. */
+
+.eh-q {
+  width: 44px; height: 44px; flex: none; border-radius: 999px;
+  border: 2px solid var(--accent); background: var(--accent); color: var(--on-accent);
+  font-family: var(--display, Georgia, serif); font-size: 20px; font-weight: 600; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+.eh-sheet {
+  width: 100%; max-width: 520px; max-height: 92dvh; overflow-y: auto; box-sizing: border-box;
+  margin: auto auto 0; padding: 14px 20px max(24px, env(safe-area-inset-bottom));
+  border: 0; border-radius: 24px 24px 0 0;
+  background: var(--surface, var(--card)); color: var(--ink);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.eh-sheet:not([open]) { display: none; }
+.eh-sheet::before {
+  content: ""; align-self: center; width: 44px; height: 5px; border-radius: 999px;
+  background: var(--muted); opacity: .6;
+}
+.eh-sheet::backdrop { background: rgba(10, 8, 16, .55); }
+@media (min-width: 640px) {
+  .eh-sheet { margin: auto; border-radius: 24px; padding: 20px 24px 24px; }
+  .eh-sheet::before { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .eh-sheet[open] { animation: eh-up .22s ease-out; }
+  @keyframes eh-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+}
+
+.eh-head { display: flex; align-items: center; gap: 14px; }
+.eh-img { width: 76px; height: 76px; object-fit: contain; flex: none; border-radius: 16px; }
+.eh-words { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.eh-title { margin: 0; font-family: var(--display, Georgia, serif); font-weight: 600; font-size: 24px; line-height: 1.2; }
+.eh-lead { margin: 0; font-size: 14px; color: var(--muted); }
+.eh-x {
+  width: 44px; height: 44px; flex: none; border: 0; border-radius: 999px;
+  background: transparent; color: var(--ink); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+.eh-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.eh-steps li { display: flex; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--ground, var(--bg)); border: 1px solid var(--line); }
+.eh-n {
+  flex: none; width: 30px; height: 30px; border-radius: 10px;
+  background: var(--peri); color: var(--on-peri, var(--ink));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display, Georgia, serif); font-weight: 600;
+}
+.eh-body { display: flex; flex-direction: column; gap: 3px; }
+.eh-body strong { font-size: 15px; }
+.eh-body span { font-size: 14px; line-height: 1.45; color: var(--muted); }
+.eh-note { margin: 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.eh-ok {
+  min-height: 56px; border: 0; border-radius: 16px; cursor: pointer;
+  background: var(--accent); color: var(--on-accent); font: inherit; font-size: 17px; font-weight: 700;
+}
+.eh-more {
+  align-self: flex-start; min-height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer;
+  color: var(--accent); font: inherit; font-size: 15px; font-weight: 500; text-decoration: underline;
+}

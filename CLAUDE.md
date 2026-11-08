@@ -10,7 +10,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 
 ## Decisions (2026-10-30)
 - Own app at quiz.ellenial.app, not a Party games game: people who just want to quiz get an easier way in.
-- Ready-made quizzes + "create your own"; own quizzes in localStorage (`eq:quizzes`), shared as `/q#z.<deflate-raw base64url>`.
+- Ready-made quizzes + "create your own". Since 8 Nov 2026 own quizzes are NEVER saved in the browser: they live only in the PDF the creator downloads (Ellen's 5 Nov decision). The PDF is drawn on this phone (canvas, A4 at 150 dpi, brand fonts, JPEG pages) and written by hand; the whole quiz rides along as one comment line `%EllenialQuiz:z.<deflate-raw base64url>` (same packing as the old share links). `readQuizPdf` reads only the first 512 KB and that line, then `unpackQuiz` → `cleanQuiz`. Both versions (with answers / team answer sheet) reopen. No new share links; old `/q#…` links still open (view `opened`, source `link`) with a nudge to download the PDF.
 - Two modes: **shared screen** (teams, host taps teams that were right) and **phones** (each phone answers, scores automatic).
 - Link principle like Split: `/join#<roomId 22>.<secret 43>`; secret only after `#`; HKDF → AES-GCM key, AAD `eq1|<roomId>`.
 - Nothing stored server-side. Host holds state in memory; phones keep only `{pid, name}` in sessionStorage for reloads.
@@ -61,6 +61,14 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - More ready-made quizzes.
 - Test on real phones at work (Mon 2 Nov).
 - Pentest of all Ellenial apps, run from its own project (decided 2026-10-30). For this app: public broadcast channel with the publishable key (encrypted, but floodable), headers/CSP. Library cards on ellenial.app stay unlinked during early alpha.
+
+## PDF-only own quizzes + "?" help (8 Nov 2026)
+- Mock-up approved by Ellen ("Build", 21:03): https://claude.ai/artifact/GsbQLLcnn9TXLtEANLQBJH
+- Home: "Skapa eget quiz" + "Öppna ett quiz-PDF"; the "Mina quiz" list is gone. People who still have `eq:quizzes` see a one-time "Dina quiz flyttar till PDF" box: download them all, then "Klar, ta bort dem härifrån" (nothing removed until tapped).
+- Editor: no autosave. "Spara ditt quiz" panel: Med svar / Svarsblad till lagen + "Ladda ner PDF" + "Se hur PDF:en ser ut". Leaving with an undownloaded change asks first ("Ladda ner quizet först?"), and `beforeunload` guards closing the tab.
+- Print preview downloads the same PDF instead of opening the browser's print dialog.
+- Shared "?" (`ellenial-help.js` + `.css`, copied unchanged from ellenial-bingo) in both head bars; "Mer om integritet" opens the privacy page except during a live game. Help text in Swedish now; `HELP.en` is ready for the language switch (Ellen, 8 Nov: every app in English and Swedish; full translation is a later task).
+- Tested (Playwright + axe, light and dark): move notice downloads 2 PDFs and clears storage only on tap; reopen keeps every field incl. explain and sort; edit → leave asks only when changed; answer sheet reopens; bad file note; old link opens; axe clean after fixing outline buttons on quiz cards (now text colour: Indigo on dark Periwinkle was 4.1:1).
 
 ## Status
 - 2026-11-03 13:52: Print / save as PDF + sort display order shipped from `staging` to `main` / quiz.ellenial.app on Ellen's yes ("Good, push"). Previous production (25c7a5a) stays in Vercel for rollback.

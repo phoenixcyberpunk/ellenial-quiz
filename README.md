@@ -11,7 +11,7 @@ Part of [Ellenial](https://ellenial.app): free tools made by people, for people.
 - **Shared screen:** everything happens in that browser. Nothing is sent anywhere.
 - **With phones:** phones talk to the shared screen through Supabase Realtime *broadcast*. Messages only pass through; there is no table and nothing is stored. Every message is encrypted on the device (AES-GCM, key derived with HKDF from a random secret). The secret only lives in the join link after `#`, which browsers never send to a server, so not even Supabase can read names or answers.
 - When the quiz ends or the tab closes, names, answers and scores are gone.
-- **Own quizzes** are saved only in that browser. A share link carries the whole quiz after `#` (compressed), so it never reaches a server either.
+- **Own quizzes** are never saved here. They live only in the PDF you download, which is made on your phone and carries the whole quiz, so you can open it here again to play or change it. Older share links still open, but no new ones are made.
 
 ## How it works
 
