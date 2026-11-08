@@ -461,7 +461,7 @@
         h('p', { style: 'margin:0' }, tx('Siffrorna i bonusrundan om vattendrag kommer från '),
           h('a', { href: 'https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/sveriges-storsta-vattendrag', rel: 'noopener' }, 'SMHI'),
           tx(' (CC BY 4.0).'))),
-      h('p', { class: 'foot', text: tx('Ritat och designat av mig, kodat med hjälp av AI. Öppen källkod (AGPL-3.0).') }));
+      h('p', { class: 'foot' }, h('a', { href: 'https://ellenial.app/drawings', rel: 'noopener', text: tx('Ritat') }), tx(' och designat av mig, kodat med hjälp av AI. Öppen källkod (AGPL-3.0).')));
   }
 
   /* ----- Setup ----- */
