@@ -87,4 +87,4 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - 2026-11-01: Brand update (palette incl. Periwinkle, DM Sans, Auto/Ljust/Mörkt, accessibility rules) reviewed on branch `staging`, then shipped to `main` / quiz.ellenial.app the same evening on Ellen's yes. Playwright + axe in both themes, phone and 1366×768: no contrast violations, all controls ≥ 3:1, no console errors.
 - 2026-10-30: v1 built, tested locally (Playwright) and live, deployed to quiz.ellenial.app (Vercel project `ellenial-quiz`, auto-deploys from `main`).
 - 2026-10-30 evening: Ellen's own test round worked. Listed in the ellenial.app library as "Early alpha" (icon `site/icons/quiz.png` in the ellenial repo).
-- 2026-11-08: English added on branch `i18n` (preview), waiting for Ellen to read the English before merging to `main`.
+- 2026-11-08: English added on branch `i18n` (preview); Ellen said go 8 Nov 22:01 with no changes, merged to `main` and live.
