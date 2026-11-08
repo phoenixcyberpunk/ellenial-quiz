@@ -1225,9 +1225,10 @@
       height += p.before || 0;
       lines.forEach(function (l, i) { rows.push({ font: p.font, color: p.color || INK, text: l, x: PM + (p.indent || 0), y: height + size, mark: i === 0 ? p.mark : null, size: size }); height += lh; });
     });
-    return { height: height, draw: function (c, top) {
+    return { height: height, draw: function (c, top, runs) {
       rows.forEach(function (r) {
         c.font = r.font; c.fillStyle = r.color; c.fillText(r.text, r.x, top + r.y);
+        if (runs) runs.push(textRun(c, r.text, r.x, top + r.y, r.size));
         if (r.mark === 'box') { c.strokeStyle = INK; c.lineWidth = 3; c.strokeRect(r.x - 52, top + r.y - r.size * 0.82, r.size * 0.85, r.size * 0.85); }
         if (r.mark === 'tick') {
           c.strokeStyle = ACCENT; c.lineWidth = 5; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath();
@@ -1289,12 +1290,45 @@
     return pages.map(function (items, pi) {
       var cv = document.createElement('canvas'); cv.width = PW; cv.height = PH;
       var c = cv.getContext('2d'); c.fillStyle = '#FFFFFF'; c.fillRect(0, 0, PW, PH); c.textBaseline = 'alphabetic';
-      items.forEach(function (it) { it.b.draw(c, it.y); });
+      var runs = [];
+      items.forEach(function (it) { it.b.draw(c, it.y, runs); });
       c.font = '400 20px ' + SANS; c.fillStyle = MUTED;
-      c.fillText('Gjort med quiz · Ellenial · quiz.ellenial.app', PM, PH - PM + 30);
-      c.textAlign = 'right'; c.fillText('Sida ' + (pi + 1) + ' av ' + pages.length, PW - PM, PH - PM + 30); c.textAlign = 'left';
+      var foot = 'Gjort med quiz · Ellenial · quiz.ellenial.app', pageNo = 'Sida ' + (pi + 1) + ' av ' + pages.length;
+      c.fillText(foot, PM, PH - PM + 30); runs.push(textRun(c, foot, PM, PH - PM + 30, 20));
+      c.textAlign = 'right'; c.fillText(pageNo, PW - PM, PH - PM + 30); c.textAlign = 'left';
+      runs.push(textRun(c, pageNo, PW - PM - c.measureText(pageNo).width, PH - PM + 30, 20));
+      cv.runs = runs;
       return cv;
     });
+  }
+  // The hidden text layer (Ellen, 8 Nov 2026): every page is the drawn picture, plus the same words as
+  // invisible text on top, so the PDF can be searched, copied and read aloud. The text uses the PDF's
+  // built-in Helvetica, stretched to the width of the drawn line so a selection lands on the words.
+  function textRun(c, text, x, y, size) {
+    var font = c.font, vis = c.measureText(text).width;
+    c.font = size + 'px Helvetica, Arial, sans-serif';
+    var hw = c.measureText(text).width || 1;
+    c.font = font;
+    return { text: text, x: x, y: y, size: size, scale: vis / hw };
+  }
+  var WIN = { 0x2013: 0x96, 0x2014: 0x97, 0x2018: 0x91, 0x2019: 0x92, 0x201C: 0x93, 0x201D: 0x94, 0x2026: 0x85, 0x20AC: 0x80, 0x2022: 0x95 };
+  function winAnsiHex(t) {
+    var out = '';
+    for (var i = 0; i < t.length; i++) {
+      var cp = t.charCodeAt(i), b = cp < 0x80 || (cp >= 0xA0 && cp <= 0xFF) ? cp : WIN[cp] || 0x3F;
+      out += (b < 16 ? '0' : '') + b.toString(16);
+    }
+    return '<' + out + '>';
+  }
+  // Text-layer operators for runs drawn on a canvas of size cw x ch, placed at (ox, oy) with size (w, h) in points.
+  function textLayer(runs, cw, ch, ox, oy, w, h) {
+    var k = w / cw, s = 'BT 3 Tr\n';
+    runs.forEach(function (r) {
+      if (!r.text) return;
+      s += '/F1 ' + (r.size * k).toFixed(2) + ' Tf ' + Math.max(1, Math.min(400, r.scale * 100)).toFixed(1) + ' Tz 1 0 0 1 ' +
+        (ox + r.x * k).toFixed(2) + ' ' + (oy + h - r.y * (h / ch)).toFixed(2) + ' Tm ' + winAnsiHex(r.text) + ' Tj\n';
+    });
+    return s + 'ET\n';
   }
   function canvasJpeg(cv) {
     var bin = atob(cv.toDataURL('image/jpeg', 0.9).split(',')[1]), out = new Uint8Array(bin.length);
@@ -1309,14 +1343,15 @@
     function push(x) { var b = typeof x === 'string' ? enc.encode(x) : x; parts.push(b); len += b.length; }
     function obj(id, body) { offsets[id] = len; push(id + ' 0 obj\n'); if (typeof body === 'string') push(body); else body(); push('\nendobj\n'); }
     push('%PDF-1.4\n'); push(PDF_MARK + payload + '\n');
-    var w = 595.28, hgt = 841.89, next = 4, kids = [];
-    var ids = pages.map(function (img) { var o = { page: next++, content: next++, img: next++, data: img }; kids.push(o.page); return o; });
+    var w = 595.28, hgt = 841.89, next = 5, kids = [];
+    var ids = pages.map(function (pg) { var o = { page: next++, content: next++, img: next++, data: pg.jpeg, runs: pg.runs || [] }; kids.push(o.page); return o; });
     obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
     obj(2, '<< /Type /Pages /Count ' + pages.length + ' /Kids [' + kids.map(function (k) { return k + ' 0 R'; }).join(' ') + '] >>');
     obj(3, '<< /Title ' + asciiPdf(title) + ' /Producer (ellenial quiz, quiz.ellenial.app) /Creator (ellenial quiz) >>');
+    obj(4, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
     ids.forEach(function (o) {
-      obj(o.page, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + w + ' ' + hgt + '] /Resources << /XObject << /P ' + o.img + ' 0 R >> >> /Contents ' + o.content + ' 0 R >>');
-      var s = 'q ' + w + ' 0 0 ' + hgt + ' 0 0 cm /P Do Q\n';
+      obj(o.page, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + w + ' ' + hgt + '] /Resources << /XObject << /P ' + o.img + ' 0 R >> /Font << /F1 4 0 R >> >> /Contents ' + o.content + ' 0 R >>');
+      var s = 'q ' + w + ' 0 0 ' + hgt + ' 0 0 cm /P Do Q\n' + textLayer(o.runs, PW, PH, 0, 0, w, hgt);
       obj(o.content, '<< /Length ' + s.length + ' >>\nstream\n' + s + 'endstream');
       obj(o.img, function () {
         push('<< /Type /XObject /Subtype /Image /Width ' + PW + ' /Height ' + PH + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + o.data.length + ' >>\nstream\n');
@@ -1336,7 +1371,7 @@
   // Both versions carry the whole quiz, so either one can be opened here again.
   function downloadQuizPdf(quiz, answers) {
     return quizFontsReady().then(function () { return packQuiz(quiz); }).then(function (payload) {
-      var blob = writePdf(drawQuizPages(quiz, answers).map(canvasJpeg), quiz.name, payload);
+      var blob = writePdf(drawQuizPages(quiz, answers).map(function (cv) { return { jpeg: canvasJpeg(cv), runs: cv.runs }; }), quiz.name, payload);
       var url = URL.createObjectURL(blob), a = h('a', { href: url, download: quizPdfName(quiz, answers) });
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
