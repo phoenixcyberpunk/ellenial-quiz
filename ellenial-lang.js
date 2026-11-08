@@ -73,7 +73,7 @@
     'Källor': 'Sources',
     'Siffrorna i bonusrundan om vattendrag kommer från ': 'The figures in the bonus round about waterways come from ',
     ' (CC BY 4.0).': ' (CC BY 4.0).',
-    'Gjord av Ellen, en person, med Claude som hjälp med koden. Öppen källkod (AGPL-3.0).': 'Made by Ellen, one person, with Claude helping with the code. Open source (AGPL-3.0).',
+    'Ritat och designat av mig, kodat med hjälp av AI. Öppen källkod (AGPL-3.0).': 'Drawn and designed by me, coded with the help of AI. Open source (AGPL-3.0).',
 
     // setup
     'Lag': 'Teams',
