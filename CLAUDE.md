@@ -16,7 +16,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Nothing stored server-side. Host holds state in memory; phones keep only `{pid, name}` in sessionStorage for reloads.
 - Time per question optional: none / 30 / 60 / 90 s, one shared calm bar.
 - Results: no last place. Team cards in entered order, "Flest rätt idag" on the top score; phones mode shows top 3 + total, each phone sees only its own score.
-- Icon: Ellen's flower per the Ellenial icon template, tile colour sage `#D5E3D6` (swapped with maps, which became pistachio `#E2EBC6`).
+- Icon (8 Nov 2026): Ellen's drawing (a 1 X 2 slip with a green tick) centred on a pistachio `#E0E9C3` tile, no name (replaces the flower + name icon). Home-screen name "Quiz", tab title "Quiz · Ellenial", header shows a small "Ellenial" above "Quiz". Details: claude.ai Project "Ellenial - Brand identity - Master", doc `claude/ellenial-drawn-app-icons.md`.
 
 ## Brand (final, decided 2026-11-01 — don't reopen)
 - Source of truth: the "Ellenial – Brand identity" doc (https://claude.ai/artifact/9Fng54MMZMyyKjkqKaVR7r). Applied everywhere in this app, no exceptions.
@@ -25,7 +25,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Theme: `ellenial-theme.js` copied unchanged from ellenial maps, loaded in `<head>` before the CSS (key `eq:theme-pref`). Auto / Ljust / Mörkt switch in every top bar via `themeButton()`. Old v1 `eq:theme` is migrated once. Test with `?theme=light|dark`.
 - Accessibility: text ≥ 4.5:1, controls ≥ 3:1 (`--edge` = Muted outline on everything tappable; Line is decorative only), never colour alone (✓ on right answers and awarded teams, words on results, underline + bold on selected segments). Wrong options on the shared screen step back with a transparent fill instead of fading the text.
 - Team colours: Periwinkle / Lavender / Card in turn (teams are always named, colour is only a helper). Semantic green stays only for "right" and "connected".
-- Quiz's sage `#D5E3D6` remains only in the icon tile (ellenial.app library), not in the UI.
+- Quiz's tile colour (pistachio `#E0E9C3` since 8 Nov) lives only in the icon, not in the UI.
 
 ## Brand Principles applied
 1. Worst day: no last place, gentle "Inte den här gången", no streaks, timer is calm and optional.
