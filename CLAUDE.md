@@ -57,7 +57,8 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - The workspace cannot reach supabase.co. Live test 2026-10-30 on quiz.ellenial.app in Ellen's desktop browser (two tabs): host connected ("Ansluten"), phone joined, sort answer arrived ("1 av 1 har svarat"), reveal showed "Rätt!" on the phone, Avsluta ended the phone too. No console errors. Realtime public channels are allowed.
 
 ## Open
-- English version (copy is inline Swedish in `app.js` for now).
+- Phone screens have no h1 (axe best-practice `page-has-heading-one`, not a WCAG failure; same in Swedish and English). Fix with the next design pass.
+- The top bar overflows by ~24 px on 320 px phones (theme switch + ?), before and after the language work.
 - More ready-made quizzes.
 - Test on real phones at work (Mon 2 Nov).
 - Pentest of all Ellenial apps, run from its own project (decided 2026-10-30). For this app: public broadcast channel with the publishable key (encrypted, but floodable), headers/CSP. Library cards on ellenial.app stay unlinked during early alpha.
@@ -68,8 +69,16 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Editor: no autosave. "Spara ditt quiz" panel: Med svar / Svarsblad till lagen + "Ladda ner PDF" + "Se hur PDF:en ser ut". Leaving with an undownloaded change asks first ("Ladda ner quizet först?"), and `beforeunload` guards closing the tab.
 - Print preview downloads the same PDF instead of opening the browser's print dialog.
 - PDF pages = the drawn picture + an invisible Helvetica text layer (render mode 3, stretched with Tz to each drawn line), so the PDF can be searched, copied and read aloud (Ellen chose this, 8 Nov). `pdftotext` returns the full quiz incl. å ä ö.
-- Shared "?" (`ellenial-help.js` + `.css`, copied unchanged from ellenial-bingo) in both head bars; "Mer om integritet" opens the privacy page except during a live game. Help text in Swedish now; `HELP.en` is ready for the language switch (Ellen, 8 Nov: every app in English and Swedish; full translation is a later task).
+- Shared "?" (`ellenial-help.js` + `.css`, copied unchanged from ellenial-bingo) in both head bars; "Mer om integritet" opens the privacy page except during a live game. Help follows the chosen language (`HELP[LANG]`).
 - Tested (Playwright + axe, light and dark): move notice downloads 2 PDFs and clears storage only on tap; reopen keeps every field incl. explain and sort; edit → leave asks only when changed; answer sheet reopens; bad file note; old link opens; axe clean after fixing outline buttons on quiz cards (now text colour: Indigo on dark Periwinkle was 4.1:1).
+
+## Languages (8 Nov 2026)
+- Ellen: every Ellenial app in Swedish and English. Quiz is written in Swedish; `ellenial-lang.js` (loaded before app.js, not deferred) holds the English, keyed by the Swedish. Every visible text goes through `tx('Svensk text')`. New text = wrap it in `tx()` AND add the English there.
+- Plurals that are the same in Swedish ('lag', 'spelare', 'quiz') use a second key ending in `#pl` (`tx('lag#pl')` → 'lag' / 'teams'); the suffix never shows.
+- Language = `?lang=sv|en` (testing, not saved) → saved choice `eq:lang` → the phone's language (sv, nb, nn, no, da give Swedish). Every phone in a game reads its own language.
+- The switch ("English" / "Svenska") sits at the bottom of the start page only (the top bar is full on small phones), because switching reloads the page: never during a game or while writing a quiz.
+- Content is never translated: the built-in Vattendrag quiz stays Swedish and gets an "In Swedish" tag in English; own quizzes stay as written. PDF labels and the file name follow the language.
+- Tested 8 Nov in Playwright: English phone through start, help, privacy, editor, print, PDF (and reopen), phones game (lobby, join, questions, answers, results on both) and shared-screen game. No Swedish left except content, axe 0 except the phone-h1 note above, no errors. The Swedish regression test (move notice, PDF, editor, leave dialog, old link, help) passes unchanged.
 
 ## Status
 - 2026-11-03 13:52: Print / save as PDF + sort display order shipped from `staging` to `main` / quiz.ellenial.app on Ellen's yes ("Good, push"). Previous production (25c7a5a) stays in Vercel for rollback.
@@ -78,3 +87,4 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - 2026-11-01: Brand update (palette incl. Periwinkle, DM Sans, Auto/Ljust/Mörkt, accessibility rules) reviewed on branch `staging`, then shipped to `main` / quiz.ellenial.app the same evening on Ellen's yes. Playwright + axe in both themes, phone and 1366×768: no contrast violations, all controls ≥ 3:1, no console errors.
 - 2026-10-30: v1 built, tested locally (Playwright) and live, deployed to quiz.ellenial.app (Vercel project `ellenial-quiz`, auto-deploys from `main`).
 - 2026-10-30 evening: Ellen's own test round worked. Listed in the ellenial.app library as "Early alpha" (icon `site/icons/quiz.png` in the ellenial repo).
+- 2026-11-08: English added on branch `i18n` (preview), waiting for Ellen to read the English before merging to `main`.

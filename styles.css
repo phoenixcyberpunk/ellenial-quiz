@@ -352,3 +352,5 @@ textarea.input { resize: vertical; min-height: 70px; }
 .leave-ask::before { display: none; }
 /* Outline buttons on a quiz card use the text colour: Indigo on the dark card's Periwinkle is only 4.1:1 */
 .quiz-card .btn.ghost { color: var(--ink); border-color: var(--ink); }
+.chip-btn { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--ink); background: transparent; color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.lang-row { display: flex; justify-content: center; }
