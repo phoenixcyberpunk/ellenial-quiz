@@ -285,7 +285,7 @@
 
   if (lang === 'en') {
     try {
-      document.title = 'quiz · Ellenial'
+      document.title = 'Quiz · Ellenial'
       var d = document.querySelector('meta[name="description"]')
       if (d) d.setAttribute('content', 'A free quiz to play together: on one shared screen or everyone on their own phone. No account, no ads, nothing saved.')
     } catch (e) {}

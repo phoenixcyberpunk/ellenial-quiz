@@ -1,6 +1,6 @@
 {
-  "name": "ellenial quiz",
-  "short_name": "quiz",
+  "name": "Quiz · Ellenial",
+  "short_name": "Quiz",
   "description": "Ett gratis quiz att köra tillsammans. Inget konto, ingen reklam, inget sparas.",
   "lang": "sv",
   "start_url": "/",
