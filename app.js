@@ -338,7 +338,7 @@
   function brandHead() {
     return h('div', { class: 'bar' },
       h('a', { class: 'brand', href: '/', onclick: function (e) { e.preventDefault(); go('home'); } },
-        h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { text: 'quiz' })),
+        h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { class: 'brand-name' }, h('span', { class: 'ellenial-eyebrow', text: 'Ellenial' }), 'Quiz')),
       h('div', { class: 'bar-right' }, themeButton(), helpButton()));
   }
   // Svenska / English, at the bottom of the start page (the top bar is full on small phones). Only there: switching reloads the page, so it's never offered
@@ -658,7 +658,7 @@
   function stageTop(g, right) {
     return h('div', { class: 'stage-top' },
       h('div', { class: 'stage-brand' }, h('img', { src: '/icons/icon-192.png', alt: '' }),
-        h('span', null, 'quiz ', h('span', { class: 'quiz-name', text: '· ' + g.quiz.name.toLowerCase() }))),
+        h('span', null, 'Quiz ', h('span', { class: 'quiz-name', text: '· ' + g.quiz.name.toLowerCase() }))),
       h('div', { class: 'stage-tools' },
         right || null,
         document.fullscreenEnabled ? h('button', { class: 'round', 'aria-label': tx('Helskärm'), onclick: function () {
@@ -945,7 +945,7 @@
   function viewPlayer() {
     var ps = state.play;
     var head = h('div', { class: 'bar' },
-      h('div', { class: 'brand' }, h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { text: 'quiz' })),
+      h('div', { class: 'brand' }, h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { class: 'brand-name' }, h('span', { class: 'ellenial-eyebrow', text: 'Ellenial' }), 'Quiz')),
       themeButton());
     if (ps.ended) {
       return h('div', { class: 'page' }, head,

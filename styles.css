@@ -354,3 +354,7 @@ textarea.input { resize: vertical; min-height: 70px; }
 .quiz-card .btn.ghost { color: var(--ink); border-color: var(--ink); }
 .chip-btn { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--ink); background: transparent; color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
 .lang-row { display: flex; justify-content: center; }
+
+/* "Ellenial" above the app's name (decided 8 Nov 2026): credit where credit is due, without making the name longer. */
+.brand span.ellenial-eyebrow, .ellenial-eyebrow { display: block; font-family: 'DM Sans', system-ui, sans-serif; font-size: 11px; line-height: 14px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--muted); margin: 0 0 2px; }
+.brand .brand-name { display: flex; flex-direction: column; }
