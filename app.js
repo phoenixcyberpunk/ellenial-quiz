@@ -365,14 +365,14 @@
         { title: 'Välj hur ni spelar', text: 'Alla tittar på en delad skärm (tv eller projektor), eller så svarar alla på sin egen telefon via länk eller QR-kod.' },
         { title: 'Spela och se resultatet', text: 'Rätt svar visas efter varje fråga. Ingen hamnar sist: alla lag visas med sina poäng.' }
       ],
-      note: 'Inget sparas. När quizet tar slut eller fliken stängs är namn, svar och poäng borta. Jag räknar bara hur många telefoner som öppnar Quiz varje dag, inget mer.' },
+      note: 'Inget sparas. När quizet tar slut eller fliken stängs är namn, svar och poäng borta. I den här appen: en enkel besöksräknare.' },
     en: { label: 'How it works', title: 'How it works', lead: "Three steps, then you're off.", done: 'Got it', close: 'Close', more: 'More about privacy',
       steps: [
         { title: 'Pick a quiz', text: "Take a ready-made one or make your own. Own quizzes aren't saved here: they live in the PDF you download, and you can open it here again." },
         { title: 'Choose how you play', text: 'Everyone watches one shared screen (TV or projector), or everyone answers on their own phone with a link or QR code.' },
         { title: 'Play and see the result', text: 'The right answer shows after each question. Nobody comes last: every team is shown with its points.' }
       ],
-      note: 'Nothing is saved. When the quiz ends or the tab closes, names, answers and points are gone. I only count how many phones open Quiz each day, nothing more.' }
+      note: 'Nothing is saved. When the quiz ends or the tab closes, names, answers and points are gone. In this app: a simple visit counter.' }
   };
   function helpButton() {
     if (!window.EllenialHelp) return null;
@@ -431,13 +431,20 @@
         picker,
         h('button', { class: 'btn ghost block', onclick: function () { picker.click(); } }, icon('file'), tx('Öppna ett quiz-PDF')),
         h('p', { class: 'small muted', style: 'margin:0', text: tx('Egna quiz sparas inte här. De finns bara i PDF:en du laddar ner, och den kan du öppna här igen när du vill spela eller ändra.') })),
-      h('p', { class: 'foot' },
-        tx('Inget konto. Inget sparas hos mig.'), h('br'),
-        tx('Egna quiz finns bara i PDF:en du laddar ner.'), h('br'),
-        h('a', { href: '#', onclick: function (e) { e.preventDefault(); go('privacy'); } }, tx('Så fungerar det')), ' · ',
-        h('a', { href: 'https://ellenial.app', rel: 'noopener' }, 'Ellenial'), ' · ',
-        h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-quiz', rel: 'noopener' }, tx('Öppen källkod'))),
-      h('div', { class: 'lang-row' }, langButton()));
+      h('footer', { class: 'ell-foot' },
+        h('div', { class: 'ell-notes' },
+          h('p', null, tx('Inget konto. Inget sparas hos mig.')),
+          h('p', null, tx('Egna quiz finns bara i PDF:en du laddar ner.')),
+          h('p', null, h('a', { href: '#', onclick: function (e) { e.preventDefault(); go('privacy'); } }, tx('Så fungerar det')))),
+        h('div', { class: 'ell-shared' },
+          h('p', null, h('a', { href: 'https://ellenial.app/drawings', rel: 'noopener', text: tx('Ritat') }), tx(' och designat av mig, kodat med hjälp av AI.')),
+          h('p', null, tx('Gratis · inga annonser · inga trackers')),
+          h('p', null, tx('I den här appen: en enkel besöksräknare')),
+          h('p', null,
+            h('a', { href: 'https://ellenial.app', rel: 'noopener' }, tx('Ett Ellenial-verktyg')), ' · ',
+            h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-quiz', rel: 'noopener' }, tx('Källkod')), ' · ',
+            h('a', { href: 'https://ellenial.app/thanks', rel: 'noopener' }, tx('Tack')))),
+        h('div', { class: 'ell-controls' }, langButton())));
   }
 
   function viewPrivacy() {
@@ -461,7 +468,7 @@
         h('p', { style: 'margin:0' }, tx('Siffrorna i bonusrundan om vattendrag kommer från '),
           h('a', { href: 'https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/sveriges-storsta-vattendrag', rel: 'noopener' }, 'SMHI'),
           tx(' (CC BY 4.0).'))),
-      h('p', { class: 'foot' }, h('a', { href: 'https://ellenial.app/drawings', rel: 'noopener', text: tx('Ritat') }), tx(' och designat av mig, kodat med hjälp av AI. Öppen källkod (AGPL-3.0).')));
+      h('p', { class: 'foot' }, h('a', { href: 'https://ellenial.app/drawings', rel: 'noopener', text: tx('Ritat') }), tx(' och designat av mig, kodat med hjälp av AI.')));
   }
 
   /* ----- Setup ----- */

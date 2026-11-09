@@ -74,7 +74,13 @@
     'Siffrorna i bonusrundan om vattendrag kommer från ': 'The figures in the bonus round about waterways come from ',
     ' (CC BY 4.0).': ' (CC BY 4.0).',
     'Ritat': 'Drawn',
-    ' och designat av mig, kodat med hjälp av AI. Öppen källkod (AGPL-3.0).': ' and designed by me, coded with the help of AI. Open source (AGPL-3.0).',
+    ' och designat av mig, kodat med hjälp av AI.': ' and designed by me, coded with the help of AI.',
+    // shared Ellenial footer (9 Nov 2026)
+    'Gratis · inga annonser · inga trackers': 'Free · no ads · no trackers',
+    'I den här appen: en enkel besöksräknare': 'In this app: a simple visit counter',
+    'Ett Ellenial-verktyg': 'An Ellenial tool',
+    'Källkod': 'Source',
+    'Tack': 'Thanks',
 
     // setup
     'Lag': 'Teams',
