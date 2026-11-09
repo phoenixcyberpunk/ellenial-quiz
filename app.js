@@ -443,7 +443,7 @@
           h('p', null, tx('I den här appen: en enkel besöksräknare')),
           h('p', null,
             h('a', { href: 'https://ellenial.app', rel: 'noopener' }, tx('Ett Ellenial-verktyg')), ' · ',
-            h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-quiz', rel: 'noopener' }, tx('Källkod')), ' · ',
+            h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-quiz', rel: 'noopener' }, tx('GitHub')), ' · ',
             h('a', { href: 'https://ellenial.app/thanks', rel: 'noopener' }, tx('Tack')))),
         h('div', { class: 'ell-controls' }, langButton(), themeButton())));
   }
