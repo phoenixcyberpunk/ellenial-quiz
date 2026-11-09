@@ -335,11 +335,12 @@
     window.scrollTo(0, 0);
     render();
   }
-  function brandHead() {
+  // withTheme false where the page has the shared footer: the theme switch lives there (Ellen, 9 Nov)
+  function brandHead(noTheme) {
     return h('div', { class: 'bar' },
       h('a', { class: 'brand', href: '/', onclick: function (e) { e.preventDefault(); go('home'); } },
         h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { class: 'brand-name' }, h('span', { class: 'ellenial-eyebrow', text: 'Ellenial' }), 'Quiz')),
-      h('div', { class: 'bar-right' }, themeButton(), helpButton()));
+      h('div', { class: 'bar-right' }, noTheme ? null : themeButton(), helpButton()));
   }
   // Svenska / English, at the bottom of the start page (the top bar is full on small phones). Only there: switching reloads the page, so it's never offered
   // during a game or while a quiz is being written.
@@ -411,7 +412,7 @@
     var mine = myQuizzes();
     var picker = pdfPicker(function (q) { go('opened', { quiz: q, source: 'pdf' }); });
     return h('div', { class: 'page' },
-      brandHead(),
+      brandHead(true),
       h('h1', { class: 'big', text: tx('Vad ska vi quizza om idag?') }),
       builtIn.map(function (q, i) {
         var n = q.questions.length;
@@ -444,7 +445,7 @@
             h('a', { href: 'https://ellenial.app', rel: 'noopener' }, tx('Ett Ellenial-verktyg')), ' · ',
             h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-quiz', rel: 'noopener' }, tx('Källkod')), ' · ',
             h('a', { href: 'https://ellenial.app/thanks', rel: 'noopener' }, tx('Tack')))),
-        h('div', { class: 'ell-controls' }, langButton())));
+        h('div', { class: 'ell-controls' }, langButton(), themeButton())));
   }
 
   function viewPrivacy() {
