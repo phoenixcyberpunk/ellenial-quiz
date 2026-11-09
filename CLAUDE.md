@@ -5,7 +5,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 ## Infrastructure
 - **Code:** GitHub `phoenixcyberpunk/ellenial-quiz` (public, AGPL-3.0).
 - **Hosting:** Vercel team "The Ellenial Project" (`the-ellenial-project`), project `ellenial-quiz`, domain `quiz.ellenial.app`.
-- **Live connection:** Supabase project `gillefeeling` (ref `knvrvmqdxvcatsrvkrgx`), **Realtime broadcast only**: no tables, no functions, no migrations. Channel `quiz:<roomId>`, event `m`, payload `{ b: "1." + base64url(iv‖ciphertext) }`. Requires Realtime public channels to be allowed in that project.
+- **Live connection:** Supabase project `gillefeeling` (ref `knvrvmqdxvcatsrvkrgx`), **Realtime broadcast only** for the game: no game tables or data. **Exception (9 Nov 2026):** a daily visit counter for Ellen's Ongoing board: `api/visit.js` (Vercel function) calls `public.quiz_count_visit()` once per phone per Stockholm day, which can only add 1 to `ellenial_quiz.daily_visits` (migration in `supabase/migrations`). The page side is `countVisit()` at the end of `app.js`, real address only. The help text says so openly. Channel `quiz:<roomId>`, event `m`, payload `{ b: "1." + base64url(iv‖ciphertext) }`. Requires Realtime public channels to be allowed in that project.
 - **Stack:** plain HTML/CSS/JS, no build. `vendor/supabase.min.js` is supabase-js 2.118.0 bundled with esbuild (`export { createClient }`, IIFE, global `supabase`). `vendor/qrcode.js` is qrcode-generator 2.0.4.
 
 ## Decisions (2026-10-30)
