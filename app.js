@@ -365,14 +365,14 @@
         { title: 'Välj hur ni spelar', text: 'Alla tittar på en delad skärm (tv eller projektor), eller så svarar alla på sin egen telefon via länk eller QR-kod.' },
         { title: 'Spela och se resultatet', text: 'Rätt svar visas efter varje fråga. Ingen hamnar sist: alla lag visas med sina poäng.' }
       ],
-      note: 'Inget sparas. När quizet tar slut eller fliken stängs är namn, svar och poäng borta.' },
+      note: 'Inget sparas. När quizet tar slut eller fliken stängs är namn, svar och poäng borta. Jag räknar bara hur många telefoner som öppnar Quiz varje dag, inget mer.' },
     en: { label: 'How it works', title: 'How it works', lead: "Three steps, then you're off.", done: 'Got it', close: 'Close', more: 'More about privacy',
       steps: [
         { title: 'Pick a quiz', text: "Take a ready-made one or make your own. Own quizzes aren't saved here: they live in the PDF you download, and you can open it here again." },
         { title: 'Choose how you play', text: 'Everyone watches one shared screen (TV or projector), or everyone answers on their own phone with a link or QR code.' },
         { title: 'Play and see the result', text: 'The right answer shows after each question. Nobody comes last: every team is shown with its points.' }
       ],
-      note: 'Nothing is saved. When the quiz ends or the tab closes, names, answers and points are gone.' }
+      note: 'Nothing is saved. When the quiz ends or the tab closes, names, answers and points are gone. I only count how many phones open Quiz each day, nothing more.' }
   };
   function helpButton() {
     if (!window.EllenialHelp) return null;
@@ -1564,4 +1564,17 @@
     window.__quiz = { drawQuizPages: drawQuizPages, readQuizPdf: readQuizPdf, packQuiz: packQuiz, writePdf: writePdf, canvasJpeg: canvasJpeg, quizFontsReady: quizFontsReady, state: function () { return state; } };
   }
   boot();
+
+  // Visit counter for Ellen's project board: one count per browser per day, nothing else.
+  // The date is remembered in this browser only; the server just adds 1 to today's number.
+  (function countVisit() {
+    try {
+      if (!(location.hostname === 'quiz.ellenial.app')) return;
+      var day = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Stockholm' }).format(new Date());
+      if (localStorage.getItem('ellenial-quiz:counted') === day) return;
+      localStorage.setItem('ellenial-quiz:counted', day);
+      if (navigator.sendBeacon) navigator.sendBeacon('/api/visit');
+      else fetch('/api/visit', { method: 'POST', keepalive: true }).catch(function () {});
+    } catch (e) { /* private mode or storage off: skip counting rather than count every load */ }
+  })();
 })();
