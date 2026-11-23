@@ -444,7 +444,8 @@
           h('p', null,
             h('a', { href: 'https://ellenial.app', rel: 'noopener' }, tx('Ett Ellenial-verktyg')), ' · ',
             h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-quiz', rel: 'noopener' }, tx('GitHub')), ' · ',
-            h('a', { href: 'https://ellenial.app/thanks', rel: 'noopener' }, tx('Tack')))),
+            h('a', { href: 'https://ellenial.app/thanks', rel: 'noopener' }, tx('Tack')), ' · ',
+            h('a', { href: 'https://ellenial.app/' + (document.documentElement.lang === 'sv' ? 'sv/' : '') + 'feedback?app=quiz', rel: 'noopener' }, 'Feedback'))),
         h('div', { class: 'ell-controls' }, langButton(), themeButton())));
   }
 
