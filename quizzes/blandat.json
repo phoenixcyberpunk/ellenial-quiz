@@ -1,7 +1,7 @@
 {
   "id": "blandat",
   "name": "Blandat",
-  "intro": "Sju frågor om allt möjligt, från rymden till Kina och Indien.",
+  "intro": "Sju frågor om allt möjligt, från Venus till Kina och Indien.",
   "questions": [
     {
       "type": "mc",
@@ -17,27 +17,15 @@
     },
     {
       "type": "mc",
-      "prompt": "Vilket djur kommer först i den kinesiska zodiaken?",
+      "prompt": "Varför ger man helst inte en klocka i present i Kina?",
       "options": [
-        "Draken",
-        "Tigern",
-        "Råttan",
-        "Oxen"
-      ],
-      "answer": 2,
-      "explain": "Enligt legenden red råttan på oxens rygg i kapplöpningen och hoppade i mål först. Därför kommer oxen tvåa."
-    },
-    {
-      "type": "mc",
-      "prompt": "Diwali, en av Indiens största högtider, kallas ofta …",
-      "options": [
-        "Färgernas högtid",
-        "Ljusets högtid",
-        "Skördens högtid",
-        "Vårens högtid"
+        "Det betyder att gästen ska gå hem",
+        "Det låter som att följa någon till graven",
+        "Klockor bringar otur till nyår",
+        "Det betyder att man är skyldig pengar"
       ],
       "answer": 1,
-      "explain": "Under Diwali tänds oljelampor och ljus för att fira att ljuset segrar över mörkret. Färgernas högtid är Holi, då man kastar färgpulver på varandra."
+      "explain": "\"Ge en klocka\" (sòng zhōng) låter nästan som orden för att ta hand om någon på dödsbädden och följa hen till graven. Därför ses det som ett dåligt omen."
     },
     {
       "type": "mc",
@@ -62,6 +50,18 @@
       ],
       "answer": 1,
       "explain": "W kommer från wolfram, det tyska namnet på volfram. Vanadin är V och vismut är Bi."
+    },
+    {
+      "type": "mc",
+      "prompt": "Hur många språk räknas upp i Indiens grundlag?",
+      "options": [
+        "2",
+        "12",
+        "22",
+        "42"
+      ],
+      "answer": 2,
+      "explain": "Grundlagen räknar upp 22 språk. Hindi och engelska är de språk som används av statsmakten, och totalt talas hundratals språk i Indien."
     },
     {
       "type": "tf",
