@@ -1,0 +1,122 @@
+{
+  "id": "hogtider",
+  "name": "Svenska högtider och seder",
+  "intro": "Från semla till svartsoppa. Hur bra koll har ni på årets högtider?",
+  "questions": [
+    {
+      "type": "mc",
+      "prompt": "Vad äter man som förrätt på en klassisk gåsamiddag på Mårten gås, 10 november?",
+      "options": [
+        "Svartsoppa",
+        "Ärtsoppa",
+        "Kålsoppa",
+        "Nässelsoppa"
+      ],
+      "answer": 0,
+      "explain": "Svartsoppa lagas på gåsblod och buljong. Sedan kommer stekt gås och till sist skånsk äppelkaka med vaniljsås."
+    },
+    {
+      "type": "tf",
+      "prompt": "Fram till 1994 var det förbjudet att fiska kräftor före början av augusti.",
+      "answer": true,
+      "explain": "Fiskeförbudet skulle skydda kräftorna mot överfiske. Det är därför kräftskivor hålls i augusti, och kräftpremiären lever kvar fast förbudet är borta."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vilket år kröntes Stockholms första lucia, efter en tävling i Stockholms Dagblad?",
+      "options": [
+        "1764",
+        "1880",
+        "1927",
+        "1953"
+      ],
+      "answer": 2,
+      "explain": "Stockholms Dagblad utsåg en lucia 1927, och efter det spred sig dagens luciafirande. 1764 är första gången en lucia nämns i Sverige, på Horns boställe norr om Skövde."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vad heter dagen då julen dansas ut och granen åker ut?",
+      "options": [
+        "Trettondagen",
+        "Annandag jul",
+        "Tjugondag Knut",
+        "Kyndelsmässodagen"
+      ],
+      "answer": 2,
+      "explain": "Tjugondag Knut, 13 januari, är tjugo dagar efter julafton. Då dansar man ut julen."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vilken bulle äter man på fettisdagen?",
+      "options": [
+        "Lussekatt",
+        "Kanelbulle",
+        "Vetekrans",
+        "Semla"
+      ],
+      "answer": 3,
+      "explain": "Semlan hör till fettisdagen, dagen före fastan. Numera finns den i butikerna redan långt innan."
+    },
+    {
+      "type": "tf",
+      "prompt": "Midsommarafton är en allmän helgdag i Sverige.",
+      "answer": false,
+      "explain": "Det är midsommardagen som är helgdag. Midsommarafton är ledig för de flesta, men är inte en helgdag i lagen."
+    },
+    {
+      "type": "mc",
+      "prompt": "Varför heter 25 mars våffeldagen?",
+      "options": [
+        "Våfflan kom till Sverige den dagen",
+        "Vårfrudagen lät som våffeldagen",
+        "Det var den sista dagen före fastan",
+        "Kungen ville fira våren med våfflor"
+      ],
+      "answer": 1,
+      "explain": "Dagen heter egentligen Vårfrudagen, Jungfru Marie bebådelsedag. Sagt snabbt, på vissa dialekter, blev det våffeldagen."
+    },
+    {
+      "type": "sort",
+      "prompt": "Sortera i den ordning de kommer under året",
+      "items": [
+        "Fettisdagen",
+        "Valborg",
+        "Midsommar",
+        "Mårten gås",
+        "Lucia"
+      ],
+      "notes": [
+        "I februari eller mars",
+        "30 april",
+        "I juni",
+        "10 november",
+        "13 december"
+      ],
+      "explain": "Fettisdagen flyttar med påsken men kommer alltid före valborg."
+    },
+    {
+      "type": "mc",
+      "prompt": "Vem är Mårten i Mårten gås?",
+      "options": [
+        "Martin Luther",
+        "Martin av Tours",
+        "En skånsk gåsbonde",
+        "Sankt Mikael"
+      ],
+      "answer": 1,
+      "explain": "Mårten är Martin av Tours, soldat som blev biskop på 300-talet. Martin Luther föddes 10 november och fick sitt namn efter honom, därför blandas de ofta ihop."
+    },
+    {
+      "type": "mc",
+      "prompt": "Varför är Sveriges nationaldag 6 juni?",
+      "options": [
+        "Kungens födelsedag",
+        "Ett krig tog slut",
+        "Gustav Vasa valdes till kung",
+        "Riksdagen möttes första gången"
+      ],
+      "answer": 2,
+      "explain": "Gustav Vasa valdes till kung 6 juni 1523. Samma datum fick Sverige en ny grundlag 1809. Nationaldagen blev helgdag 2005."
+    }
+  ]
+}

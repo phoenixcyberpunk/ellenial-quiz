@@ -369,3 +369,8 @@ textarea.input { resize: vertical; min-height: 70px; }
 .ell-shared { display: flex; flex-direction: column; gap: 6px; }
 .ell-controls { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0; }
 .page > .ell-foot { margin-top: auto; }
+
+/* SV | EN in the start page's top bar (25 Nov 2026) */
+.lang-seg { display: flex; border: 1.5px solid var(--edge); border-radius: 999px; overflow: hidden; }
+.lang-seg button { min-height: 44px; min-width: 44px; padding: 0 10px; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+.lang-seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }

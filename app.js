@@ -340,13 +340,19 @@
     return h('div', { class: 'bar' },
       h('a', { class: 'brand', href: '/', onclick: function (e) { e.preventDefault(); go('home'); } },
         h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { class: 'brand-name' }, h('span', { class: 'ellenial-eyebrow', text: 'Ellenial' }), 'Quiz')),
-      h('div', { class: 'bar-right' }, noTheme ? null : themeButton(), helpButton()));
+      h('div', { class: 'bar-right' }, noTheme ? langButton() : themeButton(), helpButton()));
   }
-  // Svenska / English, at the bottom of the start page (the top bar is full on small phones). Only there: switching reloads the page, so it's never offered
-  // during a game or while a quiz is being written.
+  // SV | EN at the top right of the start page (Ellen, 25 Nov 2026). The start page's bar has no theme
+  // switch (it's in the footer), so there's room. Only there: switching reloads the page, so it's never
+  // offered during a game or while a quiz is being written. Selected = bold + underline, not just colour.
   function langButton() {
     if (!window.EllenialLang) return null;
-    return h('button', { class: 'chip-btn', lang: EllenialLang.other, 'aria-label': EllenialLang.otherAria, onclick: function () { EllenialLang.set(EllenialLang.other); } }, EllenialLang.otherLabel);
+    var cur = EllenialLang.lang;
+    function seg(code, label, name) {
+      return h('button', { lang: code, 'aria-pressed': String(cur === code), 'aria-label': name, onclick: function () { if (cur !== code) EllenialLang.set(code); } }, label);
+    }
+    return h('div', { class: 'lang-seg', role: 'group', 'aria-label': cur === 'sv' ? 'Språk' : 'Language' },
+      seg('sv', 'SV', 'Svenska'), seg('en', 'EN', 'English'));
   }
   function backHead(title, onBack) {
     return h('div', { class: 'bar' },
@@ -446,7 +452,7 @@
             h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-quiz', rel: 'noopener' }, tx('GitHub')), ' · ',
             h('a', { href: 'https://ellenial.app/thanks', rel: 'noopener' }, tx('Tack')), ' · ',
             h('a', { href: 'https://ellenial.app/' + (document.documentElement.lang === 'sv' ? 'sv/' : '') + 'feedback?app=quiz', rel: 'noopener' }, 'Feedback'))),
-        h('div', { class: 'ell-controls' }, langButton(), themeButton())));
+        h('div', { class: 'ell-controls' }, themeButton())));
   }
 
   function viewPrivacy() {
@@ -1556,9 +1562,10 @@
       }
       return;
     }
-    fetch('/quizzes/vattendrag.json').then(function (r) { return r.json(); }).then(function (q) {
-      var c = cleanQuiz(q); if (c) builtIn = [c];
-    }).catch(function () {}).then(function () {
+    // Newest first: the first card gets the "Nytt" tag.
+    Promise.all(['hogtider', 'vattendrag'].map(function (id) {
+      return fetch('/quizzes/' + id + '.json').then(function (r) { return r.json(); }).then(cleanQuiz).catch(function () { return null; });
+    })).then(function (list) { builtIn = list.filter(Boolean); }).then(function () {
       if (path.indexOf('/q') === 0 && location.hash) {
         var hash = location.hash;
         unpackQuiz(hash).then(function (q) { history.replaceState(null, '', '/' + location.search); go('opened', { quiz: q, source: 'link' }); });

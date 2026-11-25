@@ -59,7 +59,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 ## Open
 - Phone screens have no h1 (axe best-practice `page-has-heading-one`, not a WCAG failure; same in Swedish and English). Fix with the next design pass.
 - The top bar overflows by ~24 px on 320 px phones (theme switch + ?), before and after the language work.
-- More ready-made quizzes.
+- More ready-made quizzes. Built-ins load from `quizzes/<id>.json`, listed newest first in `boot()` (first card gets "Nytt").
 - Test on real phones at work (Mon 2 Nov).
 - Pentest of all Ellenial apps, run from its own project (decided 2026-10-30). For this app: public broadcast channel with the publishable key (encrypted, but floodable), headers/CSP. Library cards on ellenial.app stay unlinked during early alpha.
 
@@ -76,11 +76,12 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Ellen: every Ellenial app in Swedish and English. Quiz is written in Swedish; `ellenial-lang.js` (loaded before app.js, not deferred) holds the English, keyed by the Swedish. Every visible text goes through `tx('Svensk text')`. New text = wrap it in `tx()` AND add the English there.
 - Plurals that are the same in Swedish ('lag', 'spelare', 'quiz') use a second key ending in `#pl` (`tx('lag#pl')` → 'lag' / 'teams'); the suffix never shows.
 - Language = `?lang=sv|en` (testing, not saved) → saved choice `eq:lang` → the phone's language (sv, nb, nn, no, da give Swedish). Every phone in a game reads its own language.
-- The switch ("English" / "Svenska") sits at the bottom of the start page only (the top bar is full on small phones), because switching reloads the page: never during a game or while writing a quiz.
+- The switch is a **SV | EN** segment at the top right of the start page only (Ellen, 25 Nov 2026; moved from the footer, where it was easy to miss). The start page bar has no theme switch, so it fits at 320 px. Only there because switching reloads the page: never during a game or while writing a quiz. Selected = bold + underline + fill.
 - Content is never translated: the built-in Vattendrag quiz stays Swedish and gets an "In Swedish" tag in English; own quizzes stay as written. PDF labels and the file name follow the language.
 - Tested 8 Nov in Playwright: English phone through start, help, privacy, editor, print, PDF (and reopen), phones game (lobby, join, questions, answers, results on both) and shared-screen game. No Swedish left except content, axe 0 except the phone-h1 note above, no errors. The Swedish regression test (move notice, PDF, editor, leave dialog, old link, help) passes unchanged.
 
 ## Status
+- 2026-11-25: SV | EN switch in the start page top bar + new built-in quiz "Svenska högtider och seder" (10 questions, `quizzes/hogtider.json`), pushed straight to `main` on Ellen's say-so. Playwright + axe at 320 px, light/dark, sv/en: 0 violations, no overflow, no console errors; choice persists in `eq:lang`.
 - 2026-11-03 13:52: Print / save as PDF + sort display order shipped from `staging` to `main` / quiz.ellenial.app on Ellen's yes ("Good, push"). Previous production (25c7a5a) stays in Vercel for rollback.
 - 2026-11-03: Sort questions: creator picks mixed or fixed display order (staging). Tested editor, paper and two shared-screen games: fixed order matches everywhere; axe clean in both themes.
 - 2026-11-03: Print / save as PDF built on branch `staging` (not yet on `main`). Playwright + axe in light and dark, phone width: no violations, no console errors; PDFs checked through print media in both themes.
