@@ -5,36 +5,61 @@
   "questions": [
     {
       "type": "mc",
-      "prompt": "Vilken planet ligger närmast solen?",
-      "options": ["Venus", "Merkurius", "Mars", "Jorden"],
+      "prompt": "På vilken planet är ett dygn längre än ett år?",
+      "options": [
+        "Merkurius",
+        "Venus",
+        "Mars",
+        "Neptunus"
+      ],
       "answer": 1,
-      "explain": "Merkurius är både den minsta planeten och den som ligger närmast solen."
+      "explain": "Venus snurrar så långsamt att ett varv runt sin egen axel tar 243 jorddygn, medan ett varv runt solen bara tar 225. Den snurrar dessutom åt andra hållet."
     },
     {
       "type": "mc",
       "prompt": "Vilket djur kommer först i den kinesiska zodiaken?",
-      "options": ["Draken", "Tigern", "Råttan", "Oxen"],
+      "options": [
+        "Draken",
+        "Tigern",
+        "Råttan",
+        "Oxen"
+      ],
       "answer": 2,
       "explain": "Enligt legenden red råttan på oxens rygg i kapplöpningen och hoppade i mål först. Därför kommer oxen tvåa."
     },
     {
       "type": "mc",
       "prompt": "Diwali, en av Indiens största högtider, kallas ofta …",
-      "options": ["Färgernas högtid", "Ljusets högtid", "Skördens högtid", "Vårens högtid"],
+      "options": [
+        "Färgernas högtid",
+        "Ljusets högtid",
+        "Skördens högtid",
+        "Vårens högtid"
+      ],
       "answer": 1,
       "explain": "Under Diwali tänds oljelampor och ljus för att fira att ljuset segrar över mörkret. Färgernas högtid är Holi, då man kastar färgpulver på varandra."
     },
     {
       "type": "mc",
       "prompt": "Vilket land har flest tidszoner?",
-      "options": ["Ryssland", "USA", "Kina", "Frankrike"],
+      "options": [
+        "Ryssland",
+        "USA",
+        "Kina",
+        "Frankrike"
+      ],
       "answer": 3,
       "explain": "Frankrike har 12 tidszoner tack vare sina områden runt om i världen, som Franska Polynesien och Réunion. Ryssland och USA har 11. Kina har bara en."
     },
     {
       "type": "mc",
       "prompt": "Vilket grundämne har kemiska tecknet W?",
-      "options": ["Vanadin", "Volfram", "Vismut", "Xenon"],
+      "options": [
+        "Vanadin",
+        "Volfram",
+        "Vismut",
+        "Xenon"
+      ],
       "answer": 1,
       "explain": "W kommer från wolfram, det tyska namnet på volfram. Vanadin är V och vismut är Bi."
     },
@@ -46,10 +71,15 @@
     },
     {
       "type": "mc",
-      "prompt": "Hur många ben har en spindel?",
-      "options": ["Sex", "Åtta", "Tio", "Tolv"],
-      "answer": 1,
-      "explain": "Spindlar har åtta ben. Insekter har sex."
+      "prompt": "Hur många ben har en hummer, klorna inräknade?",
+      "options": [
+        "Sex",
+        "Åtta",
+        "Tio",
+        "Tolv"
+      ],
+      "answer": 2,
+      "explain": "Hummern är ett tiofotat kräftdjur: två ben med klor och åtta gångben. Samma sak gäller krabbor och räkor."
     }
   ]
 }
