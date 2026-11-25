@@ -370,7 +370,7 @@ textarea.input { resize: vertical; min-height: 70px; }
 .ell-controls { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0; }
 .page > .ell-foot { margin-top: auto; }
 
-/* SV | EN in the start page's top bar (25 Nov 2026) */
-.lang-seg { display: flex; border: 1.5px solid var(--edge); border-radius: 999px; overflow: hidden; }
-.lang-seg button { min-height: 44px; min-width: 44px; padding: 0 10px; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
-.lang-seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+/* SV | EN (25 Nov 2026): reuses the theme switch's look (.theme-switch), see langButton() in app.js */
+.lang-switch { margin: 0; }
+/* Phones in a game: SV | EN + theme need the room on narrow phones, so the name steps aside (the icon stays, with alt text). */
+@media (max-width: 400px) { .player-bar .brand-name { display: none; } }

@@ -18,7 +18,7 @@
   // so the colour is only a helper, never the meaning.
   var TEAM_COLORS = ['var(--peri)', 'var(--soft)', 'var(--surface)'];
   var LETTERS = 'ABCDEF';
-  var TEAM_IDEAS = [tx('Forsen'), tx('Biflödet'), tx('Kanalen'), tx('Källan'), tx('Jokken'), tx('Strömmen')];
+  function teamIdeas() { return [tx('Forsen'), tx('Biflödet'), tx('Kanalen'), tx('Källan'), tx('Jokken'), tx('Strömmen')]; }
 
   var app = document.getElementById('app');
   var state = { view: 'home' };
@@ -342,18 +342,24 @@
         h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { class: 'brand-name' }, h('span', { class: 'ellenial-eyebrow', text: 'Ellenial' }), 'Quiz')),
       h('div', { class: 'bar-right' }, noTheme ? langButton() : themeButton(), helpButton()));
   }
-  // SV | EN at the top right of the start page (Ellen, 25 Nov 2026). The start page's bar has no theme
-  // switch (it's in the footer), so there's room. Only there: switching reloads the page, so it's never
-  // offered during a game or while a quiz is being written. Selected = bold + underline, not just colour.
+  // SV | EN (Ellen, 25 Nov 2026): top right on the start page, and next to the theme switch in games
+  // (shared screen and phones). Switching re-renders in place, never reloads, so a running game survives.
+  // Same look as the theme switch; selected = fill + bold + underline, not just colour.
   function langButton() {
     if (!window.EllenialLang) return null;
     var cur = EllenialLang.lang;
     function seg(code, label, name) {
-      return h('button', { lang: code, 'aria-pressed': String(cur === code), 'aria-label': name, onclick: function () { if (cur !== code) EllenialLang.set(code); } }, label);
+      return h('button', { type: 'button', class: 'theme-switch__btn', lang: code, 'aria-pressed': String(cur === code), 'aria-label': name,
+        onclick: function () { if (cur !== code) EllenialLang.set(code); } }, label);
     }
-    return h('div', { class: 'lang-seg', role: 'group', 'aria-label': cur === 'sv' ? 'Språk' : 'Language' },
+    return h('span', { class: 'theme-switch lang-switch', role: 'group', 'aria-label': cur === 'sv' ? 'Språk' : 'Language' },
       seg('sv', 'SV', 'Svenska'), seg('en', 'EN', 'English'));
   }
+  if (window.EllenialLang && EllenialLang.onChange) EllenialLang.onChange(function () {
+    // Keep scroll and whatever the person was doing; only the words change.
+    var y = window.scrollY; render(); window.scrollTo(0, y);
+    var g = state.game; if (state.view === 'host' && g) updateStatus(g);
+  });
   function backHead(title, onBack) {
     return h('div', { class: 'bar' },
       h('div', { class: 'bar-left' },
@@ -364,7 +370,7 @@
   // The shared Ellenial "?" (ellenial-help.js, decided 8 Nov 2026): help only when someone asks for it.
   // Every Ellenial app comes in Swedish and English (Ellen, 8 Nov): the help follows the language
   // chosen in ellenial-lang.js.
-  var LANG = window.EllenialLang ? EllenialLang.lang : 'sv';
+  function curLang() { return window.EllenialLang ? EllenialLang.lang : 'sv'; }
   var HELP = {
     sv: { label: 'Så funkar det', title: 'Så funkar det', lead: 'Tre steg, sen är ni igång.', done: 'Uppfattat', close: 'Stäng', more: 'Mer om integritet',
       steps: [
@@ -383,7 +389,7 @@
   };
   function helpButton() {
     if (!window.EllenialHelp) return null;
-    var hp = HELP[LANG];
+    var hp = HELP[curLang()];
     return EllenialHelp.button({ label: hp.label, onclick: function () {
       var live = state.view === 'host' || state.view === 'player';
       EllenialHelp.open({ title: hp.title, lead: hp.lead, image: '/icons/icon-192.png', steps: hp.steps, note: hp.note, done: hp.done, close: hp.close,
@@ -424,7 +430,7 @@
         var n = q.questions.length;
         return h('div', { class: 'quiz-card' },
           i === 0 ? h('span', { class: 'pill', text: tx('Nytt') }) : null,
-          LANG === 'en' ? h('span', { class: 'pill', lang: 'en', text: 'In Swedish' }) : null,
+          curLang() === 'en' ? h('span', { class: 'pill', lang: 'en', text: 'In Swedish' }) : null,
           h('h2', { text: q.name }),
           q.intro ? h('p', { text: q.intro }) : null,
           h('p', { class: 'small muted', text: plural(n, tx('fråga'), tx('frågor')) + (q.bonus ? tx(' + bonusrunda') : '') }),
@@ -486,7 +492,7 @@
       quiz: quiz,
       setup: {
         mode: last.mode === 'phones' ? 'phones' : 'screen',
-        teams: Array.isArray(last.teams) && last.teams.length ? last.teams.slice(0, 6).map(function (t) { return clean(t, LIMITS.name); }).filter(Boolean) : TEAM_IDEAS.slice(0, 2),
+        teams: Array.isArray(last.teams) && last.teams.length ? last.teams.slice(0, 6).map(function (t) { return clean(t, LIMITS.name); }).filter(Boolean) : teamIdeas().slice(0, 2),
         time: [0, 30, 60, 90].indexOf(last.time) >= 0 ? last.time : 60,
         bonus: last.bonus !== false
       }
@@ -509,7 +515,7 @@
             s.teams.length > 1 ? h('button', { 'aria-label': tx('Ta bort ') + t, onclick: function () { s.teams.splice(i, 1); rerender(); } }, icon('x', 16)) : null);
         }),
         s.teams.length < 6 ? h('button', { class: 'btn dashed', style: 'min-height:44px;padding:0 14px', onclick: function () {
-          var idea = TEAM_IDEAS.find(function (x) { return s.teams.indexOf(x) < 0; }) || (tx('Lag ') + (s.teams.length + 1));
+          var idea = teamIdeas().find(function (x) { return s.teams.indexOf(x) < 0; }) || (tx('Lag ') + (s.teams.length + 1));
           s.teams.push(idea); rerender();
         } }, tx('+ Lag')) : null),
       h('p', { class: 'small muted', style: 'margin:0', text: tx('Tryck på ett namn för att ändra det. Ni skriver svaren på lapp eller ropar, och på svarsskärmen trycker du på lagen som hade rätt.') })) : null;
@@ -679,7 +685,7 @@
         document.fullscreenEnabled ? h('button', { class: 'round', 'aria-label': tx('Helskärm'), onclick: function () {
           if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(function () {});
         } }, icon('full')) : null,
-        themeButton()));
+        langButton(), themeButton()));
   }
   function statusLine(g) {
     if (g.mode !== 'phones') return null;
@@ -959,9 +965,9 @@
   }
   function viewPlayer() {
     var ps = state.play;
-    var head = h('div', { class: 'bar' },
-      h('div', { class: 'brand' }, h('img', { src: '/icons/icon-192.png', alt: '' }), h('span', { class: 'brand-name' }, h('span', { class: 'ellenial-eyebrow', text: 'Ellenial' }), 'Quiz')),
-      themeButton());
+    var head = h('div', { class: 'bar player-bar' },
+      h('div', { class: 'brand' }, h('img', { src: '/icons/icon-192.png', alt: 'Quiz · Ellenial' }), h('span', { class: 'brand-name' }, h('span', { class: 'ellenial-eyebrow', text: 'Ellenial' }), 'Quiz')),
+      h('div', { class: 'bar-right' }, langButton(), themeButton()));
     if (ps.ended) {
       return h('div', { class: 'page' }, head,
         h('div', { class: 'big-msg' }, h('h2', { text: tx('Tack för att du spelade!') }), h('p', { text: tx('Quizet är slut. Inget av det sparas.') })),
@@ -1563,7 +1569,7 @@
       return;
     }
     // Newest first: the first card gets the "Nytt" tag.
-    Promise.all(['hogtider', 'vattendrag'].map(function (id) {
+    Promise.all(['blandat', 'hogtider', 'vattendrag'].map(function (id) {
       return fetch('/quizzes/' + id + '.json').then(function (r) { return r.json(); }).then(cleanQuiz).catch(function () { return null; });
     })).then(function (list) { builtIn = list.filter(Boolean); }).then(function () {
       if (path.indexOf('/q') === 0 && location.hash) {

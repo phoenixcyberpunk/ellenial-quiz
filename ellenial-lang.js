@@ -5,7 +5,7 @@
  * ('lag' / 'lag#pl') but not in English ('team' / 'teams'); the '#pl' never shows.
  * The choice follows the phone's language until someone taps the switch, and is then saved on this
  * phone only (localStorage `eq:lang`). Test with ?lang=sv or ?lang=en (not saved).
- * Switching reloads the page, so it's only offered on the start page.
+ * Switching re-renders in place (no reload), so it's offered during games too (25 Nov 2026).
  * The built-in quiz (Vattendrag) and people's own quizzes are never translated: they're content.
  */
 ;(function () {
@@ -290,20 +290,34 @@
     'PDF:en görs här på telefonen och skickas ingenstans. Skriv ut den, eller öppna den här igen för att spela.': 'The PDF is made here on your phone and sent nowhere. Print it, or open it here again to play.'
   }
 
-  if (lang === 'en') {
+  var DESC = {
+    sv: 'Ett gratis quiz att köra tillsammans: på en delad skärm eller med var sin mobil. Inget konto, ingen reklam, inget sparas.',
+    en: 'A free quiz to play together: on one shared screen or everyone on their own phone. No account, no ads, nothing saved.'
+  }
+  function applyMeta() {
     try {
-      document.title = 'Quiz · Ellenial'
+      document.documentElement.lang = lang
       var d = document.querySelector('meta[name="description"]')
-      if (d) d.setAttribute('content', 'A free quiz to play together: on one shared screen or everyone on their own phone. No account, no ads, nothing saved.')
+      if (d) d.setAttribute('content', DESC[lang])
     } catch (e) {}
   }
+  applyMeta()
 
+  // Switching happens in place, without a reload (Ellen, 25 Nov 2026: change language during the quiz too).
+  // A reload would end a game on the shared screen and lose a phone's join link, so the app re-renders instead.
+  var listeners = []
   window.EllenialLang = {
-    lang: lang,
-    other: lang === 'sv' ? 'en' : 'sv',
-    otherLabel: lang === 'sv' ? 'English' : 'Svenska',
-    otherAria: lang === 'sv' ? 'Switch to English' : 'Byt till svenska',
-    set: function (l) { try { localStorage.setItem(KEY, l) } catch (e) {} location.reload() }
+    get lang() { return lang },
+    get other() { return lang === 'sv' ? 'en' : 'sv' },
+    set: function (l) {
+      if (l !== 'sv' && l !== 'en') return
+      try { localStorage.setItem(KEY, l) } catch (e) {}
+      if (l === lang) return
+      lang = l
+      applyMeta()
+      listeners.forEach(function (f) { try { f(lang) } catch (e) {} })
+    },
+    onChange: function (f) { listeners.push(f) }
   }
   window.tx = function (s) {
     if (lang === 'en' && Object.prototype.hasOwnProperty.call(EN, s)) return EN[s]
