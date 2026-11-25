@@ -959,13 +959,14 @@
   /* ----- Player (phone) ----- */
   function openJoin(ref) {
     var saved = session('eq:p:' + ref.roomId);
-    go('player', { play: { ref: ref, pid: saved && saved.pid, name: saved ? saved.name : '', s: null, joined: false, online: false, my: {}, sortPick: [] } });
+    var myAns = (saved && saved.my && typeof saved.my === 'object') ? saved.my : {};
+    go('player', { play: { ref: ref, pid: saved && saved.pid, name: saved ? saved.name : '', s: null, joined: false, online: false, my: myAns, sortPick: [] } });
     if (saved && saved.pid) joinRoom();
   }
   function joinRoom() {
     var ps = state.play;
     if (!ps.pid) ps.pid = randomB64u(12);
-    session('eq:p:' + ps.ref.roomId, { pid: ps.pid, name: ps.name });
+    session('eq:p:' + ps.ref.roomId, { pid: ps.pid, name: ps.name, my: ps.my });
     ps.joined = true;
     keepAwake();
     ps.conn = connect(ps.ref.roomId, ps.ref.secret, onPlayerMessage, function (ok) {
@@ -980,11 +981,11 @@
   function onPlayerMessage(m) {
     var ps = state.play;
     if (state.view !== 'player' || !m) return;
-    if (m.t === 'end') { ps.ended = true; clearInterval(ps.hello); ps.conn.close(); render(); return; }
+    if (m.t === 'end') { ps.ended = true; clearInterval(ps.hello); ps.conn.close(); try { sessionStorage.removeItem('eq:room'); } catch (e) {} render(); return; }
     if (m.t !== 'state' || typeof m.phase !== 'string' || !Array.isArray(m.ids)) return;
     var prev = ps.s, changed = !prev || prev.phase !== m.phase || prev.i !== m.i || prev.locked !== m.locked;
     if (prev && prev.i !== m.i) ps.sortPick = [];
-    if (m.phase === 'lobby' && prev && prev.phase !== 'lobby') { ps.my = {}; }
+    if (m.phase === 'lobby' && prev && prev.phase !== 'lobby') { ps.my = {}; session('eq:p:' + ps.ref.roomId, { pid: ps.pid, name: ps.name, my: ps.my }); }
     ps.s = m;
     if (m.phase === 'question' && typeof m.rem === 'number') {
       if (changed || !ps.endsAt) { ps.endsAt = Date.now() + m.rem; ps.total = Math.max(m.rem, 1000); }
@@ -995,6 +996,7 @@
   function sendAnswer(a) {
     var ps = state.play;
     ps.my[ps.s.i] = a;
+    session('eq:p:' + ps.ref.roomId, { pid: ps.pid, name: ps.name, my: ps.my }); // a refresh keeps the answer shown
     ps.conn.send({ t: 'answer', pid: ps.pid, i: ps.s.i, a: a });
     render();
   }
@@ -1599,7 +1601,12 @@
     migrateTheme();
     var path = location.pathname;
     if (path.indexOf('/join') === 0) {
+      // The key leaves the address bar once read, but stays in this tab (sessionStorage) so a refresh
+      // rejoins the same game with the same name and points (25 Nov 2026: people refreshed by mistake
+      // and were thrown out). It's gone when the tab closes or the quiz ends.
       var ref = readRoomRef(location.hash);
+      if (ref) session('eq:room', location.hash);
+      else { var kept = session('eq:room'); if (typeof kept === 'string') ref = readRoomRef(kept); }
       if (ref) { history.replaceState(null, '', '/join' + location.search); openJoin(ref); }
       else {
         app.innerHTML = '';
