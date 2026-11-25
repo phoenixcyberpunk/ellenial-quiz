@@ -180,7 +180,7 @@
     'Du fick ': 'You got ',
     ' rätt av ': ' right out of ',
     'Du är bland dem med flest rätt idag. Snyggt!': 'You’re among those with the most right today. Nice!',
-    'Bra jobbat. Nu kan du fler ord för vatten än i morse.': 'Well done. Now you know more words for water than you did this morning.',
+    'Bra jobbat. Nu vet du lite mer än i morse.': 'Well done. Now you know a bit more than you did this morning.',
     'Huvudsaken är att man är med. Nästa gång!': 'Taking part is what counts. Next time!',
     'Ditt resultat syns bara här, och försvinner när quizet slutar.': 'Your result only shows here, and is gone when the quiz ends.',
     'Titta på skärmen': 'Look at the screen',

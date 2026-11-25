@@ -13,7 +13,17 @@
         "Neptunus"
       ],
       "answer": 1,
-      "explain": "Venus snurrar så långsamt att ett varv runt sin egen axel tar 243 jorddygn, medan ett varv runt solen bara tar 225. Den snurrar dessutom åt andra hållet."
+      "explain": "Venus snurrar så långsamt att ett varv runt sin egen axel tar 243 jorddygn, medan ett varv runt solen bara tar 225. Den snurrar dessutom åt andra hållet.",
+      "en": {
+        "prompt": "On which planet is a day longer than a year?",
+        "options": [
+          "Mercury",
+          "Venus",
+          "Mars",
+          "Neptune"
+        ],
+        "explain": "Venus spins so slowly that one turn on its own axis takes 243 Earth days, while one lap around the sun takes only 225. It also spins the other way."
+      }
     },
     {
       "type": "mc",
@@ -25,7 +35,17 @@
         "Det betyder att man är skyldig pengar"
       ],
       "answer": 1,
-      "explain": "\"Ge en klocka\" (sòng zhōng) låter nästan som orden för att ta hand om någon på dödsbädden och följa hen till graven. Därför ses det som ett dåligt omen."
+      "explain": "\"Ge en klocka\" (sòng zhōng) låter nästan som orden för att ta hand om någon på dödsbädden och följa hen till graven. Därför ses det som ett dåligt omen.",
+      "en": {
+        "prompt": "Why do people avoid giving a clock as a present in China?",
+        "options": [
+          "It means the guest should go home",
+          "It sounds like seeing someone to the grave",
+          "Clocks bring bad luck at New Year",
+          "It means you owe money"
+        ],
+        "explain": "\"Giving a clock\" (sòng zhōng) sounds almost the same as the words for caring for someone on their deathbed and seeing them to the grave, so it's taken as a bad omen."
+      }
     },
     {
       "type": "mc",
@@ -37,7 +57,17 @@
         "Frankrike"
       ],
       "answer": 3,
-      "explain": "Frankrike har 12 tidszoner tack vare sina områden runt om i världen, som Franska Polynesien och Réunion. Ryssland och USA har 11. Kina har bara en."
+      "explain": "Frankrike har 12 tidszoner tack vare sina områden runt om i världen, som Franska Polynesien och Réunion. Ryssland och USA har 11. Kina har bara en.",
+      "en": {
+        "prompt": "Which country has the most time zones?",
+        "options": [
+          "Russia",
+          "USA",
+          "China",
+          "France"
+        ],
+        "explain": "France has 12 time zones thanks to its territories around the world, like French Polynesia and Réunion. Russia and the USA have 11. China has just one."
+      }
     },
     {
       "type": "mc",
@@ -49,7 +79,17 @@
         "Xenon"
       ],
       "answer": 1,
-      "explain": "W kommer från wolfram, det tyska namnet på volfram. Vanadin är V och vismut är Bi."
+      "explain": "W kommer från wolfram, det tyska namnet på volfram. Vanadin är V och vismut är Bi.",
+      "en": {
+        "prompt": "Which element has the chemical symbol W?",
+        "options": [
+          "Vanadium",
+          "Tungsten",
+          "Bismuth",
+          "Xenon"
+        ],
+        "explain": "W comes from wolfram, the German name for tungsten. Vanadium is V and bismuth is Bi."
+      }
     },
     {
       "type": "mc",
@@ -61,13 +101,21 @@
         "42"
       ],
       "answer": 2,
-      "explain": "Grundlagen räknar upp 22 språk. Hindi och engelska är de språk som används av statsmakten, och totalt talas hundratals språk i Indien."
+      "explain": "Grundlagen räknar upp 22 språk. Hindi och engelska är de språk som används av statsmakten, och totalt talas hundratals språk i Indien.",
+      "en": {
+        "prompt": "How many languages are listed in India's constitution?",
+        "explain": "The constitution lists 22 languages. Hindi and English are the languages the central government works in, and hundreds of languages are spoken across India."
+      }
     },
     {
       "type": "tf",
       "prompt": "En bläckfisk har tre hjärtan.",
       "answer": true,
-      "explain": "Två hjärtan pumpar blod genom gälarna och ett pumpar det vidare ut i kroppen."
+      "explain": "Två hjärtan pumpar blod genom gälarna och ett pumpar det vidare ut i kroppen.",
+      "en": {
+        "prompt": "An octopus has three hearts.",
+        "explain": "Two hearts pump blood through the gills and one pumps it on around the body."
+      }
     },
     {
       "type": "mc",
@@ -79,7 +127,21 @@
         "Tolv"
       ],
       "answer": 2,
-      "explain": "Hummern är ett tiofotat kräftdjur: två ben med klor och åtta gångben. Samma sak gäller krabbor och räkor."
+      "explain": "Hummern är ett tiofotat kräftdjur: två ben med klor och åtta gångben. Samma sak gäller krabbor och räkor.",
+      "en": {
+        "prompt": "How many legs does a lobster have, counting the claws?",
+        "options": [
+          "Six",
+          "Eight",
+          "Ten",
+          "Twelve"
+        ],
+        "explain": "A lobster is a ten-footed crustacean: two legs with claws and eight walking legs. Crabs and shrimp are the same."
+      }
     }
-  ]
+  ],
+  "en": {
+    "name": "Mixed bag",
+    "intro": "Seven questions about anything, from Venus to China and India."
+  }
 }

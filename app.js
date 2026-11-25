@@ -261,6 +261,16 @@
       // same on screen and on paper. Without it the screen mixes every game.
       if (Array.isArray(q.fixed) && q.fixed.length === q.items.length && isPerm(q.fixed, q.items.length)) out.fixed = q.fixed.slice();
     } else return null;
+    // Built-in quizzes carry an English version (Ellen, 25 Nov 2026). Same shape, same order, text only.
+    if (q.en && typeof q.en === 'object') {
+      var e = {}, ep = clean(q.en.prompt, LIMITS.prompt), ee = clean(q.en.explain, LIMITS.explain);
+      if (ep) e.prompt = ep;
+      if (ee) e.explain = ee;
+      ['options', 'items', 'notes'].forEach(function (k) {
+        if (out[k] && Array.isArray(q.en[k]) && q.en[k].length === out[k].length) e[k] = q.en[k].map(function (x) { return clean(x, k === 'notes' ? 120 : LIMITS.option); });
+      });
+      if (e.prompt) out.en = e;
+    }
     return out;
   }
   function isPerm(arr, n) {
@@ -271,11 +281,13 @@
     if (!q || typeof q !== 'object' || !Array.isArray(q.questions)) return null;
     var out = { name: clean(q.name, LIMITS.quizName) || tx('Mitt quiz'), questions: [] };
     if (q.intro) out.intro = clean(q.intro, 200);
+    if (q.en && clean(q.en.name, LIMITS.quizName)) out.en = { name: clean(q.en.name, LIMITS.quizName), intro: clean(q.en.intro, 200) };
     q.questions.slice(0, LIMITS.questions).forEach(function (x) { var c = cleanQuestion(x); if (c) out.questions.push(c); });
     if (!out.questions.length) return null;
     if (q.bonus && Array.isArray(q.bonus.questions)) {
       var b = { name: clean(q.bonus.name, LIMITS.quizName) || tx('Bonusrunda'), intro: clean(q.bonus.intro, 200), questions: [] };
       q.bonus.questions.slice(0, 20).forEach(function (x) { var c = cleanQuestion(x); if (c) b.questions.push(c); });
+      if (q.bonus.en && clean(q.bonus.en.name, LIMITS.quizName)) b.en = { name: clean(q.bonus.en.name, LIMITS.quizName), intro: clean(q.bonus.en.intro, 200) };
       if (b.questions.length) out.bonus = b;
     }
     return out;
@@ -371,6 +383,22 @@
   // Every Ellenial app comes in Swedish and English (Ellen, 8 Nov): the help follows the language
   // chosen in ellenial-lang.js.
   function curLang() { return window.EllenialLang ? EllenialLang.lang : 'sv'; }
+  // Quiz text in the chosen language: the English version where a quiz has one (the built-in quizzes),
+  // otherwise as written. Applied when drawing, so SV | EN changes the questions too, even mid-game.
+  function loc(x) {
+    if (!x || !x.en || curLang() !== 'en') return x;
+    var o = Object.assign({}, x);
+    Object.keys(x.en).forEach(function (k) { if (x.en[k]) o[k] = x.en[k]; });
+    return o;
+  }
+  // A plain copy in the chosen language (for paper and PDF), without the other language riding along.
+  function locQuiz(quiz) {
+    function strip(x) { var o = loc(x); o = Object.assign({}, o); delete o.en; return o; }
+    var o = strip(quiz);
+    o.questions = quiz.questions.map(strip);
+    if (quiz.bonus) { o.bonus = strip(quiz.bonus); o.bonus.questions = quiz.bonus.questions.map(strip); }
+    return o;
+  }
   var HELP = {
     sv: { label: 'Så funkar det', title: 'Så funkar det', lead: 'Tre steg, sen är ni igång.', done: 'Uppfattat', close: 'Stäng', more: 'Mer om integritet',
       steps: [
@@ -427,12 +455,12 @@
       brandHead(true),
       h('h1', { class: 'big', text: tx('Vad ska vi quizza om idag?') }),
       builtIn.map(function (q, i) {
-        var n = q.questions.length;
+        var n = q.questions.length, lq = loc(q);
         return h('div', { class: 'quiz-card' },
           i === 0 ? h('span', { class: 'pill', text: tx('Nytt') }) : null,
-          curLang() === 'en' ? h('span', { class: 'pill', lang: 'en', text: 'In Swedish' }) : null,
-          h('h2', { text: q.name }),
-          q.intro ? h('p', { text: q.intro }) : null,
+          curLang() === 'en' && !q.en ? h('span', { class: 'pill', lang: 'en', text: 'In Swedish' }) : null,
+          h('h2', { text: lq.name }),
+          lq.intro ? h('p', { text: lq.intro }) : null,
           h('p', { class: 'small muted', text: plural(n, tx('fråga'), tx('frågor')) + (q.bonus ? tx(' + bonusrunda') : '') }),
           h('button', { class: 'btn block', style: 'margin-top:6px', onclick: function () { openSetup(q); } }, tx('Spela')),
           h('button', { class: 'btn soft block', onclick: function () { openPrint(q, function () { go('home'); }); } }, icon('print'), tx('Skriv ut')));
@@ -521,7 +549,7 @@
       h('p', { class: 'small muted', style: 'margin:0', text: tx('Tryck på ett namn för att ändra det. Ni skriver svaren på lapp eller ropar, och på svarsskärmen trycker du på lagen som hade rätt.') })) : null;
 
     return h('div', { class: 'page' },
-      backHead(quiz.name),
+      backHead(loc(quiz).name),
       h('div', { class: 'group' },
         h('h2', { class: 'label', text: tx('Hur spelar ni?') }),
         modeBtn('screen', 'screen', tx('En delad skärm'), tx('Frågorna på tv:n eller projektorn. Ni svarar i lag, högt eller på lapp.')),
@@ -534,7 +562,7 @@
             return h('button', { 'aria-pressed': String(s.time === t), onclick: function () { s.time = t; rerender(); } }, t ? t + ' s' : tx('Ingen'));
           }))),
       quiz.bonus ? h('label', { class: 'toggle' },
-        h('span', null, h('strong', { text: quiz.bonus.name }), h('br'), h('span', { class: 'small muted', text: quiz.bonus.intro || plural(quiz.bonus.questions.length, tx('fråga'), tx('frågor')) })),
+        h('span', null, h('strong', { text: loc(quiz.bonus).name }), h('br'), h('span', { class: 'small muted', text: loc(quiz.bonus).intro || plural(quiz.bonus.questions.length, tx('fråga'), tx('frågor')) })),
         h('input', { type: 'checkbox', checked: s.bonus, onchange: function (e) { s.bonus = e.target.checked; } })) : null,
       h('button', { class: 'btn block', style: 'margin-top:auto', onclick: startGame }, tx('Starta på den delade skärmen')),
       h('p', { class: 'small muted', style: 'margin:0;text-align:center', text: tx('Öppna gärna sidan på datorn som är kopplad till tv:n eller projektorn.') }));
@@ -579,6 +607,12 @@
     var p = { type: q.type, prompt: q.prompt, bonus: !!q.bonus };
     if (q.type === 'mc') p.options = q.options;
     if (q.type === 'sort') p.items = q.shown.map(function (k) { return q.items[k]; });
+    // Each phone picks its own language, so the English rides along when there is one.
+    if (q.en) {
+      p.en = { prompt: q.en.prompt };
+      if (q.type === 'mc' && q.en.options) p.en.options = q.en.options;
+      if (q.type === 'sort' && q.en.items) p.en.items = q.shown.map(function (k) { return q.en.items[k]; });
+    }
     return p;
   }
   function correctOf(q) {
@@ -636,6 +670,7 @@
       g.order.forEach(function (id) { var p = g.players[id]; msg.scores[id] = [p.score, g.phase === 'reveal' && q ? (isRight(q, p.ans[g.i]) ? 1 : (p.ans[g.i] === undefined ? -1 : 0)) : 0]; });
     }
     if (g.phase === 'reveal' && q) msg.reveal = { answer: correctOf(q), explain: q.explain || '' };
+    if (g.phase === 'reveal' && q && q.en && q.en.explain) msg.reveal.explainEn = q.en.explain;
     if (g.phase === 'results') msg.top = topPlayers(g).map(function (x) { return [x.name, x.score]; });
     g.conn.send(msg);
   }
@@ -679,7 +714,7 @@
   function stageTop(g, right) {
     return h('div', { class: 'stage-top' },
       h('div', { class: 'stage-brand' }, h('img', { src: '/icons/icon-192.png', alt: '' }),
-        h('span', null, 'Quiz ', h('span', { class: 'quiz-name', text: '· ' + g.quiz.name.toLowerCase() }))),
+        h('span', null, 'Quiz ', h('span', { class: 'quiz-name', text: '· ' + loc(g.quiz).name.toLowerCase() }))),
       h('div', { class: 'stage-tools' },
         right || null,
         document.fullscreenEnabled ? h('button', { class: 'round', 'aria-label': tx('Helskärm'), onclick: function () {
@@ -723,8 +758,8 @@
     return h('div', { class: 'stage' },
       stageTop(g),
       h('div', { style: 'display:flex;flex-direction:column;gap:12px' },
-        h('h1', { text: g.quiz.name }),
-        g.quiz.intro ? h('p', { class: 'sub', text: g.quiz.intro }) : null,
+        h('h1', { text: loc(g.quiz).name }),
+        loc(g.quiz).intro ? h('p', { class: 'sub', text: loc(g.quiz).intro }) : null,
         h('p', { class: 'sub', text: plural(g.qs.length, tx('fråga'), tx('frågor')) + (g.time ? ' · ' + g.time + tx(' sekunder per fråga') : '') })),
       h('div', { class: 'teams-grid' }, g.teams.map(function (t, i) {
         return h('div', { class: 'team-card', style: 'background:' + TEAM_COLORS[i % 3] }, h('span', { class: 'tname', text: t.name }));
@@ -765,7 +800,7 @@
     return tx('Fråga ') + (g.i + 1) + tx(' av ') + main;
   }
   function hostQuestion(g) {
-    var q = g.qs[g.i], body;
+    var q = loc(g.qs[g.i]), body;
     if (q.type === 'sort') {
       body = h('div', { class: 'cards-grid' }, q.shown.map(function (k, pos) {
         return h('div', { class: 'word-card' },
@@ -782,7 +817,7 @@
     }
     var hint = q.type === 'sort' ? (g.mode === 'phones' ? tx('Tryck på orden i rätt ordning på mobilen.') : tx('Skriv bokstäverna i rätt ordning, till exempel ') + LETTERS.slice(0, 3).split('').join(' – ') + ' …')
       : g.mode === 'phones' ? tx('Svara på mobilen.') : null;
-    var bonusIntro = q.bonus === 'first' && g.quiz.bonus ? h('p', { class: 'sub', style: 'font-weight:700;color:var(--ink)', text: g.quiz.bonus.name + '. ' + (g.quiz.bonus.intro || '') }) : null;
+    var bonusIntro = q.bonus === 'first' && g.quiz.bonus ? h('p', { class: 'sub', style: 'font-weight:700;color:var(--ink)', text: loc(g.quiz.bonus).name + '. ' + (loc(g.quiz.bonus).intro || '') }) : null;
     return h('div', { class: 'stage' },
       stageTop(g, h('span', { class: 'tools-row' }, statusLine(g), h('span', { text: questionLabel(g) }))),
       h('div', { style: 'display:flex;flex-direction:column;gap:10px' },
@@ -802,7 +837,7 @@
       h('span', { class: 'timer-text', id: 'ttext' }));
   }
   function hostRevealView(g) {
-    var q = g.qs[g.i], body, counts = null;
+    var q = loc(g.qs[g.i]), body, counts = null;
     if (g.mode === 'phones') {
       counts = {};
       g.order.forEach(function (id) {
@@ -1005,13 +1040,13 @@
       return h('div', { class: 'page' }, head,
         h('div', { class: 'big-msg' }, h('h2', { text: tx('Klart!') }),
           h('p', { style: 'font-size:22px;color:var(--ink);font-weight:600', text: tx('Du fick ') + myScore + tx(' rätt av ') + s.n + '.' }),
-          h('p', { text: top ? tx('Du är bland dem med flest rätt idag. Snyggt!') : myScore > 0 ? tx('Bra jobbat. Nu kan du fler ord för vatten än i morse.') : tx('Huvudsaken är att man är med. Nästa gång!') })),
+          h('p', { text: top ? tx('Du är bland dem med flest rätt idag. Snyggt!') : myScore > 0 ? tx('Bra jobbat. Nu vet du lite mer än i morse.') : tx('Huvudsaken är att man är med. Nästa gång!') })),
         h('p', { class: 'foot', text: tx('Ditt resultat syns bara här, och försvinner när quizet slutar.') }));
     }
     return h('div', { class: 'page' }, head, h('div', { class: 'big-msg' }, h('h2', { text: tx('Titta på skärmen') })));
   }
   function playerQuestion(ps, s) {
-    var q = s.q, mine = ps.my[s.i], locked = s.locked || (ps.endsAt && Date.now() >= ps.endsAt);
+    var q = loc(s.q), mine = ps.my[s.i], locked = s.locked || (ps.endsAt && Date.now() >= ps.endsAt);
     var parts = [h('p', { class: 'label', text: (q.bonus ? tx('Bonusfråga') : tx('Fråga ') + (s.i + 1)) }), h('h2', { class: 'prompt', text: q.prompt })];
     if (ps.endsAt) parts.push(timerEl());
     if (locked) {
@@ -1045,7 +1080,7 @@
     return parts;
   }
   function playerReveal(ps, s) {
-    var q = s.q, r = s.reveal || {}, me = s.scores && s.scores[ps.pid], res = me ? me[1] : -1;
+    var q = loc(s.q), r = s.reveal || {}, me = s.scores && s.scores[ps.pid], res = me ? me[1] : -1;
     var answerText;
     if (q.type === 'mc') answerText = q.options[r.answer];
     else if (q.type === 'tf') answerText = r.answer ? tx('Sant') : tx('Falskt');
@@ -1054,7 +1089,7 @@
       h('div', { class: 'result-box ' + (res === 1 ? 'ok' : 'miss') },
         res === 1 ? h('h2', null, icon('check', 26), tx('Rätt!')) : h('h2', { text: res === 0 ? tx('Inte den här gången') : tx('Inget svar') }),
         h('p', { style: 'margin:0' }, h('strong', { text: tx('Svar: ') }), answerText)),
-      r.explain ? h('p', { style: 'margin:0', text: r.explain }) : null,
+      (curLang() === 'en' && r.explainEn) || r.explain ? h('p', { style: 'margin:0', text: (curLang() === 'en' && r.explainEn) || r.explain }) : null,
       h('p', { class: 'small muted', style: 'margin:0', text: tx('Nästa fråga kommer på skärmen.') })
     ];
   }
@@ -1522,7 +1557,7 @@
       answers && q.explain ? h('p', { class: 'p-explain' }, h('strong', { text: tx('Visste du? ') }), q.explain) : null);
   }
   function viewPrint() {
-    var quiz = state.quiz, answers = state.answers;
+    var quiz = locQuiz(state.quiz), answers = state.answers;
     function setAnswers(v) { store('eq:print', v ? 'answers' : 'blank'); state.answers = v; render(); }
     var n = quiz.questions.length, num = 0;
     var sheet = h('article', { class: 'sheet', 'aria-label': tx('Förhandsvisning av utskriften') },

@@ -13,13 +13,27 @@
         "Nässelsoppa"
       ],
       "answer": 0,
-      "explain": "Svartsoppa lagas på gåsblod och buljong. Sedan kommer stekt gås och till sist skånsk äppelkaka med vaniljsås."
+      "explain": "Svartsoppa lagas på gåsblod och buljong. Sedan kommer stekt gås och till sist skånsk äppelkaka med vaniljsås.",
+      "en": {
+        "prompt": "What is the starter at a classic goose dinner on Mårten gås, 10 November?",
+        "options": [
+          "Svartsoppa (black soup)",
+          "Pea soup",
+          "Cabbage soup",
+          "Nettle soup"
+        ],
+        "explain": "Svartsoppa is made with goose blood and stock. Then comes roast goose, and finally Skåne apple cake with vanilla custard."
+      }
     },
     {
       "type": "tf",
       "prompt": "Fram till 1994 var det förbjudet att fiska kräftor före början av augusti.",
       "answer": true,
-      "explain": "Fiskeförbudet skulle skydda kräftorna mot överfiske. Det är därför kräftskivor hålls i augusti, och kräftpremiären lever kvar fast förbudet är borta."
+      "explain": "Fiskeförbudet skulle skydda kräftorna mot överfiske. Det är därför kräftskivor hålls i augusti, och kräftpremiären lever kvar fast förbudet är borta.",
+      "en": {
+        "prompt": "Until 1994 it was illegal to fish for crayfish before early August.",
+        "explain": "The ban was there to protect crayfish from overfishing. That's why crayfish parties are held in August, and the \"crayfish premiere\" lives on even though the ban is gone."
+      }
     },
     {
       "type": "mc",
@@ -31,7 +45,11 @@
         "1953"
       ],
       "answer": 2,
-      "explain": "Stockholms Dagblad utsåg en lucia 1927, och efter det spred sig dagens luciafirande. 1764 är första gången en lucia nämns i Sverige, på Horns boställe norr om Skövde."
+      "explain": "Stockholms Dagblad utsåg en lucia 1927, och efter det spred sig dagens luciafirande. 1764 är första gången en lucia nämns i Sverige, på Horns boställe norr om Skövde.",
+      "en": {
+        "prompt": "In which year was Stockholm's first Lucia crowned, after a competition in the newspaper Stockholms Dagblad?",
+        "explain": "Stockholms Dagblad chose a Lucia in 1927, and today's Lucia celebrations spread from there. 1764 is the first time a Lucia is mentioned in Sweden, at Horns boställe north of Skövde."
+      }
     },
     {
       "type": "mc",
@@ -43,7 +61,17 @@
         "Kyndelsmässodagen"
       ],
       "answer": 2,
-      "explain": "Tjugondag Knut, 13 januari, är tjugo dagar efter julafton. Då dansar man ut julen."
+      "explain": "Tjugondag Knut, 13 januari, är tjugo dagar efter julafton. Då dansar man ut julen.",
+      "en": {
+        "prompt": "What is the day called when Christmas is \"danced out\" and the tree goes out?",
+        "options": [
+          "Trettondagen (Epiphany)",
+          "Annandag jul (Boxing Day)",
+          "Tjugondag Knut",
+          "Kyndelsmässodagen (Candlemas)"
+        ],
+        "explain": "Tjugondag Knut, 13 January, is twenty days after Christmas Eve. That's when Swedes dance Christmas out."
+      }
     },
     {
       "type": "mc",
@@ -55,13 +83,27 @@
         "Semla"
       ],
       "answer": 3,
-      "explain": "Semlan hör till fettisdagen, dagen före fastan. Numera finns den i butikerna redan långt innan."
+      "explain": "Semlan hör till fettisdagen, dagen före fastan. Numera finns den i butikerna redan långt innan.",
+      "en": {
+        "prompt": "Which bun do Swedes eat on fettisdagen (Shrove Tuesday)?",
+        "options": [
+          "Lussekatt (saffron bun)",
+          "Kanelbulle (cinnamon bun)",
+          "Vetekrans (wreath loaf)",
+          "Semla"
+        ],
+        "explain": "The semla belongs to Shrove Tuesday, the day before Lent. These days it's in the shops long before."
+      }
     },
     {
       "type": "tf",
       "prompt": "Midsommarafton är en allmän helgdag i Sverige.",
       "answer": false,
-      "explain": "Det är midsommardagen som är helgdag. Midsommarafton är ledig för de flesta, men är inte en helgdag i lagen."
+      "explain": "Det är midsommardagen som är helgdag. Midsommarafton är ledig för de flesta, men är inte en helgdag i lagen.",
+      "en": {
+        "prompt": "Midsummer Eve is an official public holiday in Sweden.",
+        "explain": "It's Midsummer Day that is the public holiday. Most people have Midsummer Eve off, but by law it isn't a public holiday."
+      }
     },
     {
       "type": "mc",
@@ -73,7 +115,17 @@
         "Kungen ville fira våren med våfflor"
       ],
       "answer": 1,
-      "explain": "Dagen heter egentligen Vårfrudagen, Jungfru Marie bebådelsedag. Sagt snabbt, på vissa dialekter, blev det våffeldagen."
+      "explain": "Dagen heter egentligen Vårfrudagen, Jungfru Marie bebådelsedag. Sagt snabbt, på vissa dialekter, blev det våffeldagen.",
+      "en": {
+        "prompt": "Why is 25 March called våffeldagen (Waffle Day)?",
+        "options": [
+          "Waffles arrived in Sweden that day",
+          "Vårfrudagen sounded like våffeldagen",
+          "It was the last day before Lent",
+          "The king wanted to welcome spring with waffles"
+        ],
+        "explain": "The day is really Vårfrudagen, Our Lady's Day (the Annunciation). Said quickly, in some dialects, it became våffeldagen."
+      }
     },
     {
       "type": "sort",
@@ -92,7 +144,25 @@
         "10 november",
         "13 december"
       ],
-      "explain": "Fettisdagen flyttar med påsken men kommer alltid före valborg."
+      "explain": "Fettisdagen flyttar med påsken men kommer alltid före valborg.",
+      "en": {
+        "prompt": "Put them in order through the year",
+        "items": [
+          "Fettisdagen (Shrove Tuesday)",
+          "Valborg (Walpurgis Night)",
+          "Midsummer",
+          "Mårten gås",
+          "Lucia"
+        ],
+        "notes": [
+          "In February or March",
+          "30 April",
+          "In June",
+          "10 November",
+          "13 December"
+        ],
+        "explain": "Shrove Tuesday moves with Easter, but always comes before Walpurgis Night."
+      }
     },
     {
       "type": "mc",
@@ -104,7 +174,17 @@
         "Sankt Mikael"
       ],
       "answer": 1,
-      "explain": "Mårten är Martin av Tours, soldat som blev biskop på 300-talet. Martin Luther föddes 10 november och fick sitt namn efter honom, därför blandas de ofta ihop."
+      "explain": "Mårten är Martin av Tours, soldat som blev biskop på 300-talet. Martin Luther föddes 10 november och fick sitt namn efter honom, därför blandas de ofta ihop.",
+      "en": {
+        "prompt": "Who is the Mårten in Mårten gås?",
+        "options": [
+          "Martin Luther",
+          "Saint Martin of Tours",
+          "A goose farmer from Skåne",
+          "Saint Michael"
+        ],
+        "explain": "Mårten is Saint Martin of Tours, a soldier who became a bishop in the 300s. Martin Luther was born on 10 November and named after him, which is why the two are often mixed up."
+      }
     },
     {
       "type": "mc",
@@ -116,7 +196,21 @@
         "Riksdagen möttes första gången"
       ],
       "answer": 2,
-      "explain": "Gustav Vasa valdes till kung 6 juni 1523. Samma datum fick Sverige en ny grundlag 1809. Nationaldagen blev helgdag 2005."
+      "explain": "Gustav Vasa valdes till kung 6 juni 1523. Samma datum fick Sverige en ny grundlag 1809. Nationaldagen blev helgdag 2005.",
+      "en": {
+        "prompt": "Why is Sweden's national day on 6 June?",
+        "options": [
+          "The King's birthday",
+          "A war ended",
+          "Gustav Vasa was elected king",
+          "The Riksdag met for the first time"
+        ],
+        "explain": "Gustav Vasa was elected king on 6 June 1523. Sweden also got a new constitution on the same date in 1809. The national day became a public holiday in 2005."
+      }
     }
-  ]
+  ],
+  "en": {
+    "name": "Swedish holidays and customs",
+    "intro": "From semla buns to black soup. How well do you know Sweden's year of holidays?"
+  }
 }

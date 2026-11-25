@@ -6,85 +6,252 @@
     {
       "type": "sort",
       "prompt": "Sortera från minst till störst",
-      "items": ["Källa", "Rännil", "Bäck", "Å", "Älv"],
-      "notes": ["Där vattnet tränger upp ur marken", "En pytteliten strimma, ofta bara efter regn", "Litet, går att kliva över", "Mellanstort, i söder ibland stort", "Stort, mest i norr"],
+      "items": [
+        "Källa",
+        "Rännil",
+        "Bäck",
+        "Å",
+        "Älv"
+      ],
+      "notes": [
+        "Där vattnet tränger upp ur marken",
+        "En pytteliten strimma, ofta bara efter regn",
+        "Litet, går att kliva över",
+        "Mellanstort, i söder ibland stort",
+        "Stort, mest i norr"
+      ],
       "visual": "grow",
-      "explain": "Ungefär så, men svenskan har inga officiella storleksgränser."
+      "explain": "Ungefär så, men svenskan har inga officiella storleksgränser.",
+      "en": {
+        "prompt": "Put them in order from smallest to biggest",
+        "items": [
+          "Källa",
+          "Rännil",
+          "Bäck",
+          "Å",
+          "Älv"
+        ],
+        "notes": [
+          "A spring: where water comes up from the ground",
+          "A tiny trickle, often only after rain",
+          "A brook: small, you can step over it",
+          "A small river, sometimes big in the south",
+          "A big river, mostly in the north"
+        ],
+        "explain": "Roughly like that, but Swedish has no official size limits."
+      }
     },
     {
       "type": "mc",
       "prompt": "Var tränger vattnet upp ur marken?",
-      "options": ["I en källa", "I en fors", "I ett biflöde", "I ett dike"],
+      "options": [
+        "I en källa",
+        "I en fors",
+        "I ett biflöde",
+        "I ett dike"
+      ],
       "answer": 0,
-      "explain": "En källa är platsen där grundvatten tränger upp ur marken."
+      "explain": "En källa är platsen där grundvatten tränger upp ur marken.",
+      "en": {
+        "prompt": "Where does water come up out of the ground?",
+        "options": [
+          "In a källa",
+          "In a fors",
+          "In a biflöde",
+          "In a dike"
+        ],
+        "explain": "A källa (spring) is the place where groundwater comes up out of the ground."
+      }
     },
     {
       "type": "tf",
       "prompt": "En å är alltid mindre än en älv.",
       "answer": false,
-      "explain": "Svenskan har inga officiella gränser. Vissa åar i söder, som Emån och Helge å, är större än små älvar i norr."
+      "explain": "Svenskan har inga officiella gränser. Vissa åar i söder, som Emån och Helge å, är större än små älvar i norr.",
+      "en": {
+        "prompt": "An å is always smaller than an älv.",
+        "explain": "Swedish has no official limits. Some åar in the south, like Emån and Helge å, are bigger than small älvar in the north."
+      }
     },
     {
       "type": "mc",
       "prompt": "Vad kallar vi oftast stora utländska vattendrag, som Nilen och Amazonas?",
-      "options": ["Älv", "Flod", "Ström", "Å"],
+      "options": [
+        "Älv",
+        "Flod",
+        "Ström",
+        "Å"
+      ],
       "answer": 1,
-      "explain": "Flod säger vi nästan bara om utländska vattendrag. Stora svenska vattendrag kallas älvar."
+      "explain": "Flod säger vi nästan bara om utländska vattendrag. Stora svenska vattendrag kallas älvar.",
+      "en": {
+        "prompt": "What do Swedes usually call big rivers abroad, like the Nile and the Amazon?",
+        "options": [
+          "Älv",
+          "Flod",
+          "Ström",
+          "Å"
+        ],
+        "explain": "Swedes say flod almost only about rivers abroad. Big Swedish rivers are called älvar."
+      }
     },
     {
       "type": "mc",
       "prompt": "Vilket ord har samiskt ursprung och betyder bäck eller å i fjällen?",
-      "options": ["Rännil", "Jokk", "Fors", "Kanal"],
+      "options": [
+        "Rännil",
+        "Jokk",
+        "Fors",
+        "Kanal"
+      ],
       "answer": 1,
-      "explain": "Jokk, eller jåkk, är ett nordligt ord med samiskt ursprung."
+      "explain": "Jokk, eller jåkk, är ett nordligt ord med samiskt ursprung.",
+      "en": {
+        "prompt": "Which word comes from Sami and means a stream or small river in the mountains?",
+        "options": [
+          "Rännil",
+          "Jokk",
+          "Fors",
+          "Kanal"
+        ],
+        "explain": "Jokk, or jåkk, is a northern word of Sami origin."
+      }
     },
     {
       "type": "mc",
       "prompt": "Vad är ett biflöde?",
-      "options": ["Ett vattendrag som rinner ut i ett större", "En sjö mitt i en älv", "Vatten som rinner åt fel håll", "Ett grävt dike längs en åker"],
+      "options": [
+        "Ett vattendrag som rinner ut i ett större",
+        "En sjö mitt i en älv",
+        "Vatten som rinner åt fel håll",
+        "Ett grävt dike längs en åker"
+      ],
       "answer": 0,
-      "explain": "Ett biflöde är ett vattendrag som rinner ut i ett större vattendrag."
+      "explain": "Ett biflöde är ett vattendrag som rinner ut i ett större vattendrag.",
+      "en": {
+        "prompt": "What is a biflöde?",
+        "options": [
+          "A stream that flows into a bigger one",
+          "A lake in the middle of a river",
+          "Water flowing the wrong way",
+          "A dug ditch along a field"
+        ],
+        "explain": "A biflöde is a tributary: a stream that flows into a bigger one."
+      }
     },
     {
       "type": "tf",
       "prompt": "En rännil finns ofta bara efter regn.",
       "answer": true,
-      "explain": "En rännil är en pytteliten strimma vatten, och den är ofta tillfällig."
+      "explain": "En rännil är en pytteliten strimma vatten, och den är ofta tillfällig.",
+      "en": {
+        "prompt": "A rännil often only exists after rain.",
+        "explain": "A rännil is a tiny trickle of water, and it's often temporary."
+      }
     },
     {
       "type": "mc",
       "prompt": "Vilka två är grävda av människor?",
-      "options": ["Fors och ström", "Kanal och dike", "Bäck och å", "Källa och rännil"],
+      "options": [
+        "Fors och ström",
+        "Kanal och dike",
+        "Bäck och å",
+        "Källa och rännil"
+      ],
       "answer": 1,
-      "explain": "Kanaler och diken är grävda av människor. Resten har naturen gjort."
+      "explain": "Kanaler och diken är grävda av människor. Resten har naturen gjort.",
+      "en": {
+        "prompt": "Which two are dug by people?",
+        "options": [
+          "Fors and ström",
+          "Kanal and dike",
+          "Bäck and å",
+          "Källa and rännil"
+        ],
+        "explain": "A kanal (canal) and a dike (ditch) are dug by people. Nature made the rest."
+      }
     },
     {
       "type": "mc",
       "prompt": "Norrström i Stockholm är ett exempel på en …",
-      "options": ["ström", "fors", "jokk", "bäck"],
+      "options": [
+        "ström",
+        "fors",
+        "jokk",
+        "bäck"
+      ],
       "answer": 0,
-      "explain": "En ström är kraftigt strömmande vatten, ofta vid ett utlopp. Norrström rinner från Mälaren ut mot Saltsjön."
+      "explain": "En ström är kraftigt strömmande vatten, ofta vid ett utlopp. Norrström rinner från Mälaren ut mot Saltsjön.",
+      "en": {
+        "prompt": "Norrström in Stockholm is an example of a …",
+        "options": [
+          "ström",
+          "fors",
+          "jokk",
+          "bäck"
+        ],
+        "explain": "A ström is strongly flowing water, often at an outlet. Norrström flows from Lake Mälaren out to Saltsjön."
+      }
     },
     {
       "type": "mc",
       "prompt": "Vad är en fors?",
-      "options": ["En sträcka där vattnet forsar fram", "Ett vattendrag i fjällen", "Där en älv mynnar i havet", "En grävd kanal"],
+      "options": [
+        "En sträcka där vattnet forsar fram",
+        "Ett vattendrag i fjällen",
+        "Där en älv mynnar i havet",
+        "En grävd kanal"
+      ],
       "answer": 0,
-      "explain": "En fors är en sträcka med forsande vatten, ofta över stenar."
+      "explain": "En fors är en sträcka med forsande vatten, ofta över stenar.",
+      "en": {
+        "prompt": "What is a fors?",
+        "options": [
+          "A stretch where the water rushes along",
+          "A stream in the mountains",
+          "Where an älv meets the sea",
+          "A dug canal"
+        ],
+        "explain": "A fors is a stretch of rushing water, rapids, often over rocks."
+      }
     },
     {
       "type": "mc",
       "prompt": "Älvar finns mest i norr. Vilken stor älv är undantaget i väst?",
-      "options": ["Torneälven", "Luleälven", "Göta älv", "Umeälven"],
+      "options": [
+        "Torneälven",
+        "Luleälven",
+        "Göta älv",
+        "Umeälven"
+      ],
       "answer": 2,
-      "explain": "Göta älv rinner från Vänern ner till Göteborg."
+      "explain": "Göta älv rinner från Vänern ner till Göteborg.",
+      "en": {
+        "prompt": "Älvar are mostly in the north. Which big älv is the exception in the west?",
+        "explain": "Göta älv flows from Lake Vänern down to Gothenburg."
+      }
     },
     {
       "type": "mc",
       "prompt": "Vilket vattendrag kan man oftast kliva över?",
-      "options": ["En bäck", "En å", "En älv", "En ström"],
+      "options": [
+        "En bäck",
+        "En å",
+        "En älv",
+        "En ström"
+      ],
       "answer": 0,
-      "explain": "En bäck är litet och går ofta att kliva över."
+      "explain": "En bäck är litet och går ofta att kliva över.",
+      "en": {
+        "prompt": "Which one can you usually step over?",
+        "options": [
+          "A bäck",
+          "An å",
+          "An älv",
+          "A ström"
+        ],
+        "explain": "A bäck is small and you can often step over it."
+      }
     }
   ],
   "bonus": {
@@ -94,24 +261,59 @@
       {
         "type": "mc",
         "prompt": "Sveriges längsta vattendrag är Göta älv–Klarälven, 746 km. Vem kommer tvåa på längd?",
-        "options": ["Dalälven", "Luleälven", "Torneälven", "Ångermanälven"],
+        "options": [
+          "Dalälven",
+          "Luleälven",
+          "Torneälven",
+          "Ångermanälven"
+        ],
         "answer": 0,
-        "explain": "Dalälven, 557 km. Torneälven är nästan lika lång, 545 km. Siffror från SMHI."
+        "explain": "Dalälven, 557 km. Torneälven är nästan lika lång, 545 km. Siffror från SMHI.",
+        "en": {
+          "prompt": "Sweden's longest river is Göta älv–Klarälven, 746 km. Which comes second for length?",
+          "explain": "Dalälven, 557 km. Torneälven is almost as long, 545 km. Figures from SMHI."
+        }
       },
       {
         "type": "mc",
         "prompt": "Göta älv för mest vatten, i snitt cirka 600 m³ i sekunden. Vem kommer tvåa på vattenföring?",
-        "options": ["Dalälven", "Luleälven", "Torneälven", "Kalixälven"],
+        "options": [
+          "Dalälven",
+          "Luleälven",
+          "Torneälven",
+          "Kalixälven"
+        ],
         "answer": 1,
-        "explain": "Luleälven, 546 m³/s. Dalälven, som var tvåa på längd, för bara 353. Siffror från SMHI."
+        "explain": "Luleälven, 546 m³/s. Dalälven, som var tvåa på längd, för bara 353. Siffror från SMHI.",
+        "en": {
+          "prompt": "Göta älv carries the most water, about 600 m³ a second on average. Which comes second for flow?",
+          "explain": "Luleälven, 546 m³/s. Dalälven, second for length, carries only 353. Figures from SMHI."
+        }
       },
       {
         "type": "mc",
         "prompt": "Göta älv har också störst avrinningsområde. Vem kommer tvåa där?",
-        "options": ["Dalälven", "Luleälven", "Torneälven", "Umeälven"],
+        "options": [
+          "Dalälven",
+          "Luleälven",
+          "Torneälven",
+          "Umeälven"
+        ],
         "answer": 2,
-        "explain": "Torneälven, nästan 40 000 km². Tvåan blir alltså olika beroende på vad man mäter. Siffror från SMHI."
+        "explain": "Torneälven, nästan 40 000 km². Tvåan blir alltså olika beroende på vad man mäter. Siffror från SMHI.",
+        "en": {
+          "prompt": "Göta älv also has the biggest catchment area. Which comes second there?",
+          "explain": "Torneälven, almost 40,000 km². So the runner-up changes depending on what you measure. Figures from SMHI."
+        }
       }
-    ]
+    ],
+    "en": {
+      "name": "Bonus round: biggest three ways",
+      "intro": "Göta älv–Klarälven wins on everything. But who comes second?"
+    }
+  },
+  "en": {
+    "name": "Swedish waterways",
+    "intro": "From källa to flod. What makes a bäck different from an å, and is an å always smaller than an älv? The Swedish words stay, the rest is in English."
   }
 }
