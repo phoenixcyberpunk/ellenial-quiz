@@ -393,7 +393,7 @@
   }
   // A plain copy in the chosen language (for paper and PDF), without the other language riding along.
   function locQuiz(quiz) {
-    function strip(x) { var o = loc(x); o = Object.assign({}, o); delete o.en; return o; }
+    function strip(x) { var o = loc(x); o = Object.assign({}, o); if (x.en && x.prompt && o.prompt !== x.prompt) o.seedPrompt = x.prompt; delete o.en; return o; }
     var o = strip(quiz);
     o.questions = quiz.questions.map(strip);
     if (quiz.bonus) { o.bonus = strip(quiz.bonus); o.bonus.questions = quiz.bonus.questions.map(strip); }
@@ -509,7 +509,11 @@
         h('h2', { class: 'label', text: tx('Källor') }),
         h('p', { style: 'margin:0' }, tx('Siffrorna i bonusrundan om vattendrag kommer från '),
           h('a', { href: 'https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/sveriges-storsta-vattendrag', rel: 'noopener' }, 'SMHI'),
-          tx(' (CC BY 4.0).'))),
+          tx(' (CC BY 4.0).')),
+        h('p', { style: 'margin:0' }, tx('Orden i Vattendrag är kollade mot '),
+          h('a', { href: 'https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/vattendragsnamn', rel: 'noopener' }, 'SMHI'), ', ',
+          h('a', { href: 'https://www.ne.se/uppslagsverk/encyklopedi/l%C3%A5ng/%C3%A5', rel: 'noopener' }, 'Nationalencyklopedin'), tx(' och '),
+          h('a', { href: 'https://www.skogen.se/glossary/a/', rel: 'noopener' }, 'Skogsencyklopedin'), '.')),
       h('p', { class: 'foot' }, h('a', { href: 'https://ellenial.app/drawings', rel: 'noopener', text: tx('Ritat') }), tx(' och designat av mig, kodat med hjälp av AI.')));
   }
 
@@ -1512,7 +1516,8 @@
   function paperOrder(q, qi) {
     if (q.fixed) return q.fixed.slice();
     var n = q.items.length, seed = 7 + qi * 31;
-    for (var c = 0; c < q.prompt.length; c++) seed = (seed * 33 + q.prompt.charCodeAt(c)) % 2147483647;
+    var key = q.seedPrompt || q.prompt; // the Swedish prompt, so both languages print the same letters
+    for (var c = 0; c < key.length; c++) seed = (seed * 33 + key.charCodeAt(c)) % 2147483647;
     var order = q.items.map(function (_, i) { return i; });
     for (var i = n - 1; i > 0; i--) {
       seed = (seed * 48271) % 2147483647;

@@ -5,40 +5,36 @@
   "questions": [
     {
       "type": "sort",
-      "prompt": "Sortera från minst till störst",
+      "prompt": "Sortera efter hur stora de oftast är, från minst till störst",
       "items": [
-        "Källa",
         "Rännil",
         "Bäck",
         "Å",
         "Älv"
       ],
       "notes": [
-        "Där vattnet tränger upp ur marken",
-        "En pytteliten strimma, ofta bara efter regn",
-        "Litet, går att kliva över",
-        "Mellanstort, i söder ibland stort",
-        "Stort, mest i norr"
+        "Rinner bara vid regn eller snösmältning",
+        "Litet, men rinner större delen av året",
+        "Oftast några meter till något tiotal meter brett",
+        "Större vattendrag i Norden"
       ],
       "visual": "grow",
-      "explain": "Ungefär så, men svenskan har inga officiella storleksgränser.",
+      "explain": "Oftast i den ordningen enligt SMHI och Nationalencyklopedin. Men det finns inga fasta storleksgränser, så en bäck i Norrland kan vara större än en å i Skåne.",
       "en": {
-        "prompt": "Put them in order from smallest to biggest",
+        "prompt": "Sort them by how big they usually are, from smallest to biggest",
         "items": [
-          "Källa",
           "Rännil",
           "Bäck",
           "Å",
           "Älv"
         ],
         "notes": [
-          "A spring: where water comes up from the ground",
-          "A tiny trickle, often only after rain",
-          "A brook: small, you can step over it",
-          "A small river, sometimes big in the south",
-          "A big river, mostly in the north"
+          "Only flows when it rains or snow melts",
+          "Small, but flows most of the year",
+          "Usually a few metres to a few tens of metres wide",
+          "A bigger river in the Nordic countries"
         ],
-        "explain": "Roughly like that, but Swedish has no official size limits."
+        "explain": "Usually in that order, according to SMHI and Nationalencyklopedin. But there are no fixed size limits, so a bäck in northern Sweden can be bigger than an å in Skåne."
       }
     },
     {
@@ -67,10 +63,10 @@
       "type": "tf",
       "prompt": "En å är alltid mindre än en älv.",
       "answer": false,
-      "explain": "Svenskan har inga officiella gränser. Vissa åar i söder, som Emån och Helge å, är större än små älvar i norr.",
+      "explain": "Det finns inga fasta gränser. Helge å i Skåne har till exempel ett avrinningsområde på cirka 4 700 km², mer än tre gånger så stort som Lögdeälvens i Västerbotten.",
       "en": {
         "prompt": "An å is always smaller than an älv.",
-        "explain": "Swedish has no official limits. Some åar in the south, like Emån and Helge å, are bigger than small älvar in the north."
+        "explain": "There are no fixed limits. Helge å in Skåne, for example, has a catchment area of about 4,700 km², more than three times the size of Lögdeälven's in Västerbotten."
       }
     },
     {
@@ -97,7 +93,7 @@
     },
     {
       "type": "mc",
-      "prompt": "Vilket ord har samiskt ursprung och betyder bäck eller å i fjällen?",
+      "prompt": "Vilket ord har samiskt ursprung och betyder bäck eller mindre älv?",
       "options": [
         "Rännil",
         "Jokk",
@@ -105,16 +101,16 @@
         "Kanal"
       ],
       "answer": 1,
-      "explain": "Jokk, eller jåkk, är ett nordligt ord med samiskt ursprung.",
+      "explain": "Jokk, eller jåkk, är en försvenskad stavning av det samiska ordet för bäck eller mindre älv, till exempel johka på nordsamiska och jåhkå på lulesamiska.",
       "en": {
-        "prompt": "Which word comes from Sami and means a stream or small river in the mountains?",
+        "prompt": "Which word comes from Sami and means a stream or small river?",
         "options": [
           "Rännil",
           "Jokk",
           "Fors",
           "Kanal"
         ],
-        "explain": "Jokk, or jåkk, is a northern word of Sami origin."
+        "explain": "Jokk, or jåkk, is the Swedish spelling of the Sami word for a stream or small river, for example johka in Northern Sami and jåhkå in Lule Sami."
       }
     },
     {
@@ -140,13 +136,25 @@
       }
     },
     {
-      "type": "tf",
-      "prompt": "En rännil finns ofta bara efter regn.",
-      "answer": true,
-      "explain": "En rännil är en pytteliten strimma vatten, och den är ofta tillfällig.",
+      "type": "mc",
+      "prompt": "Vad skiljer en bäck från en rännil?",
+      "options": [
+        "Bäcken rinner större delen av året",
+        "Rännilen är alltid bredare",
+        "Bäcken är alltid grävd",
+        "Det är samma sak"
+      ],
+      "answer": 0,
+      "explain": "En rännil rinner bara vid regn eller snösmältning. I en bäck rinner det vatten större delen av året.",
       "en": {
-        "prompt": "A rännil often only exists after rain.",
-        "explain": "A rännil is a tiny trickle of water, and it's often temporary."
+        "prompt": "What makes a bäck different from a rännil?",
+        "options": [
+          "The bäck flows most of the year",
+          "The rännil is always wider",
+          "The bäck is always dug by people",
+          "They're the same thing"
+        ],
+        "explain": "A rännil only flows when it rains or snow melts. A bäck has water flowing most of the year."
       }
     },
     {
@@ -217,40 +225,46 @@
     },
     {
       "type": "mc",
-      "prompt": "Älvar finns mest i norr. Vilken stor älv är undantaget i väst?",
+      "prompt": "Göta älv rinner ut i havet vid Göteborg. Från vilken sjö kommer den?",
       "options": [
-        "Torneälven",
-        "Luleälven",
-        "Göta älv",
-        "Umeälven"
+        "Vättern",
+        "Vänern",
+        "Mälaren",
+        "Hjälmaren"
       ],
-      "answer": 2,
-      "explain": "Göta älv rinner från Vänern ner till Göteborg.",
+      "answer": 1,
+      "explain": "Göta älv rinner från Vänern. Klarälven rinner in i Vänern från norr, och tillsammans räknas de som Sveriges längsta vattendrag, Göta älv–Klarälven.",
       "en": {
-        "prompt": "Älvar are mostly in the north. Which big älv is the exception in the west?",
-        "explain": "Göta älv flows from Lake Vänern down to Gothenburg."
+        "prompt": "Göta älv meets the sea at Gothenburg. Which lake does it flow out of?",
+        "options": [
+          "Vättern",
+          "Vänern",
+          "Mälaren",
+          "Hjälmaren"
+        ],
+        "explain": "Göta älv flows out of Lake Vänern. Klarälven flows into Vänern from the north, and together they count as Sweden's longest watercourse, Göta älv–Klarälven."
       }
     },
     {
       "type": "mc",
-      "prompt": "Vilket vattendrag kan man oftast kliva över?",
+      "prompt": "Vilket mått säger mest om hur stort ett vattendrag är, enligt SMHI?",
       "options": [
-        "En bäck",
-        "En å",
-        "En älv",
-        "En ström"
+        "Längden",
+        "Bredden",
+        "Vattenföringen",
+        "Namnet"
       ],
-      "answer": 0,
-      "explain": "En bäck är litet och går ofta att kliva över.",
+      "answer": 2,
+      "explain": "Det är vattenföringen, alltså hur mycket vatten som rinner förbi varje sekund, som säger mest om storleken. Namnet säger mindre än man tror.",
       "en": {
-        "prompt": "Which one can you usually step over?",
+        "prompt": "According to SMHI, which measure says most about how big a watercourse is?",
         "options": [
-          "A bäck",
-          "An å",
-          "An älv",
-          "A ström"
+          "Its length",
+          "Its width",
+          "Its flow",
+          "Its name"
         ],
-        "explain": "A bäck is small and you can often step over it."
+        "explain": "It's the flow, how much water passes each second, that says most about the size. The name says less than you'd think."
       }
     }
   ],
@@ -300,10 +314,10 @@
           "Umeälven"
         ],
         "answer": 2,
-        "explain": "Torneälven, nästan 40 000 km². Tvåan blir alltså olika beroende på vad man mäter. Siffror från SMHI.",
+        "explain": "Torneälven, nästan 40 000 km². Tvåan blir alltså olika beroende på vad man mäter. Visste du att 15 procent av Göta älvs avrinningsområde ligger i Norge och 36 procent av Torneälvens i Finland? Siffror från SMHI.",
         "en": {
           "prompt": "Göta älv also has the biggest catchment area. Which comes second there?",
-          "explain": "Torneälven, almost 40,000 km². So the runner-up changes depending on what you measure. Figures from SMHI."
+          "explain": "Torneälven, almost 40,000 km². So the runner-up changes depending on what you measure. Did you know 15 per cent of Göta älv's catchment is in Norway, and 36 per cent of Torneälven's in Finland? Figures from SMHI."
         }
       }
     ],
