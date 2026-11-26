@@ -1597,7 +1597,16 @@
 
   /* ---------------- start ---------------- */
 
+  // No zooming at all (Ellen, 26 Nov 2026: people with poor eyesight set text size for their whole phone).
+  // iPhone ignores user-scalable=no in the viewport tag, so pinch gestures are stopped here too.
+  function lockZoom() {
+    try {
+      document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+      document.addEventListener('touchmove', function (e) { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    } catch (e) {}
+  }
   function boot() {
+    lockZoom();
     migrateTheme();
     var path = location.pathname;
     if (path.indexOf('/join') === 0) {
