@@ -46,6 +46,36 @@
     for (var i = 2; i < arguments.length; i++) add(el, arguments[i]);
     return el;
   }
+  /* Fact sources for the built-in quizzes, shown on "Så fungerar det". Each fact checked against at least two. */
+  var SOURCES = {
+    hogtider: [
+      ['Riksdagen (lagen om allmänna helgdagar)', 'https://data.riksdagen.se/dokument/sfs-1989-253.html'],
+      ['Riksdagen (fiskeriförordningen 1982:126)', 'https://data.riksdagen.se/dokument/sfs-1982-126.html'],
+      ['Svenska kyrkan', 'https://www.svenskakyrkan.se/kopenhamn/lucia'],
+      ['Visit Sweden', 'https://visitsweden.com/about-sweden/swedens-national-day/'],
+      ['SVT', 'https://www.svt.se/nyheter/inrikes/oklar-knut-stanger-julen'],
+      ['Systembolaget', 'https://www.systembolaget.se/dryck-till-mat/kombinera-dryck-och-mat/gasamiddag/']
+    ],
+    blandat: [
+      ['NASA', 'https://spaceplace.nasa.gov/all-about-venus/'],
+      ['National Geographic', 'https://www.nationalgeographic.com/science/space/solar-system/venus/'],
+      ['Guinness World Records', 'https://www.guinnessworldrecords.com/world-records/584626-country-with-the-most-time-zones'],
+      ['timeanddate', 'https://www.timeanddate.com/time/country-with-the-most-time-zones.html'],
+      ['Royal Society of Chemistry', 'https://periodic-table.rsc.org/podcast/74/tungsten'],
+      ['South China Morning Post', 'https://www.scmp.com/lifestyle/chinese-culture/article/3316324/gifts-you-must-avoid-giving-chinese-culture-clocks-and-shoes-pears-and-why'],
+      ['Indiens parlament', 'https://eparlib.nic.in/bitstream/123456789/979171/1/AU1524.pdf'],
+      ['Live Science', 'https://www.livescience.com/how-many-hearts-does-an-octopus-have'],
+      ['Britannica', 'https://www.britannica.com/animal/decapod']
+    ]
+  };
+  function sourceLinks(list) {
+    var out = [];
+    list.forEach(function (s, i) {
+      if (i) out.push(i === list.length - 1 ? tx(' och ') : ', ');
+      out.push(h('a', { href: s[1], rel: 'noopener' }, tx(s[0])));
+    });
+    return out;
+  }
   function add(el, c) {
     if (c == null || c === false) return;
     if (Array.isArray(c)) { c.forEach(function (x) { add(el, x); }); return; }
@@ -513,7 +543,9 @@
         h('p', { style: 'margin:0' }, tx('Orden i Vattendrag är kollade mot '),
           h('a', { href: 'https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/vattendragsnamn', rel: 'noopener' }, 'SMHI'), ', ',
           h('a', { href: 'https://www.ne.se/uppslagsverk/encyklopedi/l%C3%A5ng/%C3%A5', rel: 'noopener' }, 'Nationalencyklopedin'), tx(' och '),
-          h('a', { href: 'https://www.skogen.se/glossary/a/', rel: 'noopener' }, 'Skogsencyklopedin'), '.')),
+          h('a', { href: 'https://www.skogen.se/glossary/a/', rel: 'noopener' }, 'Skogsencyklopedin'), '.'),
+        h('p', { style: 'margin:0' }, tx('Svenska högtider och seder är kollat mot '), sourceLinks(SOURCES.hogtider), '.'),
+        h('p', { style: 'margin:0' }, tx('Blandat är kollat mot '), sourceLinks(SOURCES.blandat), '.')),
       h('p', { class: 'foot' }, h('a', { href: 'https://ellenial.app/drawings', rel: 'noopener', text: tx('Ritat') }), tx(' och designat av mig, kodat med hjälp av AI.')));
   }
 

@@ -74,6 +74,11 @@
     'Siffrorna i bonusrundan om vattendrag kommer från ': 'The figures in the bonus round about waterways come from ',
     ' (CC BY 4.0).': ' (CC BY 4.0).',
     'Orden i Vattendrag är kollade mot ': 'The words in Swedish waterways are checked against ',
+    'Svenska högtider och seder är kollat mot ': 'Swedish holidays and customs is checked against ',
+    'Blandat är kollat mot ': 'Mixed bag is checked against ',
+    'Riksdagen (lagen om allmänna helgdagar)': 'the Swedish Parliament (Public Holidays Act)',
+    'Riksdagen (fiskeriförordningen 1982:126)': 'the Swedish Parliament (Fishing Ordinance 1982:126)',
+    'Indiens parlament': 'the Parliament of India',
     'Ritat': 'Drawn',
     ' och designat av mig, kodat med hjälp av AI.': ' and designed by me, coded with the help of AI.',
     // shared Ellenial footer (9 Nov 2026)

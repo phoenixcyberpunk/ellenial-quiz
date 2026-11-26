@@ -5,7 +5,7 @@
   "questions": [
     {
       "type": "mc",
-      "prompt": "På vilken planet är ett dygn längre än ett år?",
+      "prompt": "Vilken planet tar längre tid på sig att snurra ett varv runt sin egen axel än att gå ett varv runt solen?",
       "options": [
         "Merkurius",
         "Venus",
@@ -13,16 +13,16 @@
         "Neptunus"
       ],
       "answer": 1,
-      "explain": "Venus snurrar så långsamt att ett varv runt sin egen axel tar 243 jorddygn, medan ett varv runt solen bara tar 225. Den snurrar dessutom åt andra hållet.",
+      "explain": "Venus snurrar så långsamt att ett varv runt sin egen axel tar 243 jorddygn, medan ett varv runt solen bara tar 225. Den snurrar dessutom åt andra hållet, så solen går ändå upp ungefär var 117:e jorddygn.",
       "en": {
-        "prompt": "On which planet is a day longer than a year?",
+        "prompt": "Which planet takes longer to spin once on its own axis than to go once around the sun?",
         "options": [
           "Mercury",
           "Venus",
           "Mars",
           "Neptune"
         ],
-        "explain": "Venus spins so slowly that one turn on its own axis takes 243 Earth days, while one lap around the sun takes only 225. It also spins the other way."
+        "explain": "Venus spins so slowly that one turn on its own axis takes 243 Earth days, while one lap around the sun takes only 225. It also spins the other way, so the sun still rises about every 117 Earth days."
       }
     },
     {
@@ -79,7 +79,7 @@
         "Xenon"
       ],
       "answer": 1,
-      "explain": "W kommer från wolfram, det tyska namnet på volfram. Vanadin är V och vismut är Bi.",
+      "explain": "W kommer från wolfram, det tyska namnet på volfram. Engelskans tungsten kommer från svenskans tung sten. Vanadin är V och vismut är Bi.",
       "en": {
         "prompt": "Which element has the chemical symbol W?",
         "options": [
@@ -88,7 +88,7 @@
           "Bismuth",
           "Xenon"
         ],
-        "explain": "W comes from wolfram, the German name for tungsten. Vanadium is V and bismuth is Bi."
+        "explain": "W comes from wolfram, the German name for tungsten. The English name tungsten comes from the Swedish tung sten, heavy stone. Vanadium is V and bismuth is Bi."
       }
     },
     {
@@ -127,7 +127,7 @@
         "Tolv"
       ],
       "answer": 2,
-      "explain": "Hummern är ett tiofotat kräftdjur: två ben med klor och åtta gångben. Samma sak gäller krabbor och räkor.",
+      "explain": "Hummern är ett tiofotat kräftdjur: fem par ben, och det första paret bär de stora klorna. Samma sak gäller krabbor och räkor.",
       "en": {
         "prompt": "How many legs does a lobster have, counting the claws?",
         "options": [
@@ -136,7 +136,7 @@
           "Ten",
           "Twelve"
         ],
-        "explain": "A lobster is a ten-footed crustacean: two legs with claws and eight walking legs. Crabs and shrimp are the same."
+        "explain": "A lobster is a ten-footed crustacean: five pairs of legs, and the first pair carries the big claws. Crabs and shrimp are the same."
       }
     }
   ],
