@@ -49,8 +49,8 @@ A static site on Vercel's free tier plus Supabase's free tier (shared with my ot
 
 ## Credits
 
-- Product, design and the flower: Ellen Nilsson. Code: written with Claude.
-- Facts for the waterways bonus round: [SMHI, Sveriges största vattendrag](https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/sveriges-storsta-vattendrag).
+- Product, design and the hand-drawn icon: Ellen Nilsson. Code: written with Claude.
+- Facts for the waterways quiz (Vattendrag), checked against three sources: SMHI ([Sveriges största vattendrag](https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/sveriges-storsta-vattendrag), [Vattendragsnamn](https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/vattendragsnamn) and the glossary "Hydrologiska ord och begrepp"), [Nationalencyklopedin](https://www.ne.se/uppslagsverk/encyklopedi/l%C3%A5ng/%C3%A5) and [Skogsencyklopedin](https://www.skogen.se/glossary/a/).
 - Fonts: Fraunces (The Fraunces Project Authors) and DM Sans (The DM Sans Project Authors), SIL OFL 1.1, self-hosted in `fonts/`.
 - [supabase-js](https://github.com/supabase/supabase-js) (MIT), [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) by Kazuhiko Arase (MIT).
 

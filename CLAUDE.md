@@ -29,7 +29,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 
 ## Brand Principles applied
 1. Worst day: no last place, gentle "Inte den här gången", no streaks, timer is calm and optional.
-2. Art: Ellen's own flower; no AI art.
+2. Art: Ellen's own drawn icon (1 X 2 slip, since 8 Nov); no AI art.
 3. Pay myself: free, no ads, no tracking.
 4. Data: nothing stored; phone messages encrypted end to end; explained in-app ("Så fungerar det").
 5. Runs without me: static site, broadcast only, nothing to clean up.
@@ -81,6 +81,7 @@ Read this first in every session. Swedish-language quiz app under **Ellenial**. 
 - Tested 8 Nov in Playwright: English phone through start, help, privacy, editor, print, PDF (and reopen), phones game (lobby, join, questions, answers, results on both) and shared-screen game. No Swedish left except content, axe 0 except the phone-h1 note above, no errors. The Swedish regression test (move notice, PDF, editor, leave dialog, old link, help) passes unchanged.
 
 ## Status
+- 2026-11-26 16:30: README credits brought up to date on Ellen's "fix the credits!" (the pre-beta item from the 3 Nov ship check). Fonts already said DM Sans; fixed "the flower" → hand-drawn icon, and the waterways sources now list SMHI, Nationalencyklopedin and Skogsencyklopedin. Docs only, no app change.
 - 2026-11-26 06:55: shipped to `main` on Ellen's "Push", with pinch zoom OFF too (her decision: "users change UI for their whole phone if they have poor eyesight"): viewport `maximum-scale=1, user-scalable=no` + `lockZoom()` (gesturestart/two-finger touchmove prevented, since iOS ignores the tag). axe now reports `meta-viewport` by design. Before that, 2026-11-25 22:35: players who refreshed after joining were thrown out (the key is removed from the address bar after reading). Now the `#` ref is kept in sessionStorage `eq:room` (this tab only, removed on `end`), so a refresh rejoins with the same pid, name, points and the answer shown (`eq:p:<room>` now holds `my`). CSS: no pull-to-refresh/bounce (`overscroll-behavior: none`), no sideways scroll, no double-tap zoom (`touch-action: manipulation`); pinch zoom kept at first, then turned off on 26 Nov (above). Tested: refresh in lobby and mid-question keep the player and the answer; a new tab without the link still can't join; axe 0.
 - 2026-11-25 22:15: shipped to `main` on Ellen's "Yes good it works now". Vattendrag fact-checked against SMHI (sizes + glossary), Nationalencyklopedin and Skogsencyklopedin after players questioned sizes and a contradiction. Sort question now "hur stora de oftast är" with Rännil/Bäck/Å/Älv (källa removed: not a watercourse size); "kliva över en bäck" replaced by "vattenföringen"; rännil TF → bäck vs rännil (SMHI); Göta älv → which lake (Vänern); Lögdeälven example; Norway/Finland fact in bonus 3; sources on the privacy page. `paperOrder` seeds from the Swedish prompt (`seedPrompt` in `locQuiz`) so Swedish and English paper show the same letters.
 - 2026-11-25 21:55: English versions of the built-in quizzes (questions follow SV | EN, also mid-game and per phone) pushed to `main` on Ellen's "Push!". Ellen: tonight's quiz was a success (first real run since the new quizzes).
