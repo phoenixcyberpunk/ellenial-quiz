@@ -76,6 +76,8 @@
     'Orden i Vattendrag är kollade mot ': 'The words in Swedish waterways are checked against ',
     'Svenska högtider och seder är kollat mot ': 'Swedish holidays and customs is checked against ',
     'Blandat är kollat mot ': 'Mixed bag is checked against ',
+    'Visa källorna': 'Show the sources',
+    '3 quiz': '3 quizzes',
     'Riksdagen (lagen om allmänna helgdagar)': 'the Swedish Parliament (Public Holidays Act)',
     'Riksdagen (fiskeriförordningen 1982:126)': 'the Swedish Parliament (Fishing Ordinance 1982:126)',
     'Indiens parlament': 'the Parliament of India',

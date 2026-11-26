@@ -70,6 +70,26 @@ a { color: var(--accent); }
 .brand img { width: 44px; height: 44px; border-radius: 10px; display: block; }
 .brand span { font-family: var(--display); font-weight: 500; font-size: 26px; }
 .bar h1 { margin: 0; font-family: var(--display); font-weight: 600; font-size: clamp(20px, 6vw, 26px); line-height: 1.15; overflow-wrap: break-word; hyphens: auto; min-width: 0; }
+/* Back bar: back + controls on top, title on its own row underneath so it never
+   hyphenates into "Så fun-ger-ar det" (Ellen, 26 Nov 2026). */
+.backbar { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; row-gap: 14px; }
+.backbar > .bar-right { justify-self: end; }
+.backbar > h1 { grid-column: 1 / -1; grid-row: 2; hyphens: manual; font-size: clamp(26px, 8vw, 32px); }
+/* "Så fungerar det": section headers with a soft line, sources folded away (Ellen, 26 Nov 2026). */
+.info .group { gap: 12px; }
+.info .group > h2.label { padding-bottom: 8px; color: var(--ink); border-bottom: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+.sources > summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: 48px; padding: 10px 16px; border: 1.5px solid var(--edge); border-radius: 14px;
+  background: var(--surface); color: var(--ink); font-weight: 600;
+}
+.sources > summary::-webkit-details-marker { display: none; }
+.sources > summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.sources > summary .hint { font-weight: 400; color: var(--muted); }
+.sources > summary .chev { display: inline-flex; transition: transform .2s; }
+.sources[open] > summary .chev { transform: rotate(180deg); }
+.sources-body { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .sources > summary .chev { transition: none; } }
 .round {
   width: 44px; height: 44px; flex: none; border-radius: 22px;
   border: 1.5px solid var(--edge); background: var(--surface); color: var(--ink);

@@ -403,10 +403,11 @@
     var g = state.game; if (state.view === 'host' && g) updateStatus(g);
   });
   function backHead(title, onBack) {
-    return h('div', { class: 'bar' },
-      h('div', { class: 'bar-left' },
-        h('button', { class: 'round', 'aria-label': tx('Tillbaka'), onclick: onBack || function () { go('home'); } }, icon('back')),
-        h('h1', { text: title })),
+    // Grid: back + controls on top, title on its own row
+    // underneath so it isn't squeezed into "Så fun-ger-ar det" (Ellen, 26 Nov 2026).
+    return h('div', { class: 'bar backbar' },
+      h('button', { class: 'round', 'aria-label': tx('Tillbaka'), onclick: onBack || function () { go('home'); } }, icon('back')),
+      h('h1', { text: title }),
       h('div', { class: 'bar-right' }, themeButton(), helpButton()));
   }
   // The shared Ellenial "?" (ellenial-help.js, decided 8 Nov 2026): help only when someone asks for it.
@@ -520,7 +521,7 @@
   }
 
   function viewPrivacy() {
-    return h('div', { class: 'page' },
+    return h('div', { class: 'page info' },
       backHead(tx('Så fungerar det')),
       h('div', { class: 'group' },
         h('h2', { class: 'label', text: tx('Delad skärm') }),
@@ -537,6 +538,12 @@
         h('p', { style: 'margin:0', text: tx('En statisk sida på Vercel och Supabase gratisnivå, samma som mina andra appar. Alltså nära noll kronor.') })),
       h('div', { class: 'group' },
         h('h2', { class: 'label', text: tx('Källor') }),
+        // Folded away (Ellen, 26 Nov 2026): the curious tap, everyone else sees a tidy page.
+        h('details', { class: 'sources' },
+          h('summary', null,
+            h('span', null, tx('Visa källorna'), h('span', { class: 'hint' }, ' · ' + tx('3 quiz'))),
+            h('span', { class: 'chev', 'aria-hidden': 'true' }, icon('down'))),
+          h('div', { class: 'sources-body' },
         h('p', { style: 'margin:0' }, tx('Siffrorna i bonusrundan om vattendrag kommer från '),
           h('a', { href: 'https://www.smhi.se/kunskapsbanken/hydrologi/sveriges-vattendrag/sveriges-storsta-vattendrag', rel: 'noopener' }, 'SMHI'),
           tx(' (CC BY 4.0).')),
@@ -545,7 +552,7 @@
           h('a', { href: 'https://www.ne.se/uppslagsverk/encyklopedi/l%C3%A5ng/%C3%A5', rel: 'noopener' }, 'Nationalencyklopedin'), tx(' och '),
           h('a', { href: 'https://www.skogen.se/glossary/a/', rel: 'noopener' }, 'Skogsencyklopedin'), '.'),
         h('p', { style: 'margin:0' }, tx('Svenska högtider och seder är kollat mot '), sourceLinks(SOURCES.hogtider), '.'),
-        h('p', { style: 'margin:0' }, tx('Blandat är kollat mot '), sourceLinks(SOURCES.blandat), '.')),
+        h('p', { style: 'margin:0' }, tx('Blandat är kollat mot '), sourceLinks(SOURCES.blandat), '.')))),
       h('p', { class: 'foot' }, h('a', { href: 'https://ellenial.app/drawings', rel: 'noopener', text: tx('Ritat') }), tx(' och designat av mig, kodat med hjälp av AI.')));
   }
 
